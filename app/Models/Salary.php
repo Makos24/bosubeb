@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Salary extends Model
 {
     use HasFactory;
+    use \Awobaz\Compoships\Compoships;
 
     protected $guarded = ['id'];
 

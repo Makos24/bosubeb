@@ -4,7 +4,6 @@
             
         <th>S/No</th>
         <th>LGA</th>
-        <th>Name of School</th>
         <th>Number of Staff</th>
         <th>Basic Salary</th>
         <th>Rent</th>
@@ -33,7 +32,6 @@
         <tr>
             <td>{{ $loop->iteration }}</td>
             <td>{{ $payroll->first()->lga->name }}</td>
-            <td>{{ $payroll->first()->school->name }}</td>
             <td>{{ $payroll->count() }}</td>
             <td>{{ $b = number_format($payroll->sum('salary_data.basic')) }}</td>
             <td>{{ $r = number_format($payroll->sum('salary_data.rent')) }}</td>

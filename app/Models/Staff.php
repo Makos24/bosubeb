@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -9,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 class Staff extends Model
 {
     use HasFactory;
+    use \Awobaz\Compoships\Compoships;
 
     protected $guarded = ['id'];
 
@@ -16,97 +18,74 @@ class Staff extends Model
         'dob', 'dofa', 'dor'
     ];
 
-    // public function setQualificationAttribute($value)
-    // {
-    //     $data = config('data');
-    //     $key = array_search(strtolower($value), array_map('strtolower', $data['qualification']));
-    //     return $key;
-    // }
-
-    public function salaryGrade(): Attribute
+    public function salaryTwentySeven(): Attribute
     {
         return new Attribute(
-            get: fn($value, $attributes) => explode("/", $attributes["salary_grade_level"])[0],
+            get: fn($value, $attributes) => $this->status == 1 && filter_var($this->qualification, FILTER_VALIDATE_INT, array('options' => array('min_range' => 1, 'max_range' => 10))) ? $this->salary_data->basic*.275 : 0,
             set:null
         );
     }
 
-    public function salaryStep(): Attribute
+    public function salaryFifteen(): Attribute
     {
         return new Attribute(
-            get: fn($value, $attributes) => explode("/", $attributes["salary_grade_level"])[1],
+            get: fn($value, $attributes) => $this->status == 1 && !filter_var($this->qualification, FILTER_VALIDATE_INT, array('options' => array('min_range' => 1, 'max_range' => 10))) ? $this->salary_data->basic*.15 : 0,
             set:null
         );
     }
 
-    public function salaryBasic(): Attribute
+    public function salaryTwelve(): Attribute
     {
         return new Attribute(
-            get: fn($value, $attributes) => $this->salary_data($attributes)->basic,
+            get: fn($value, $attributes) => $this->status == 0 && filter_var($this->qualification, FILTER_VALIDATE_INT, array('options' => array('min_range' => 1, 'max_range' => 10))) ? $this->salary_data->basic*.125 : 0,
             set:null
         );
     }
 
-    public function salaryRent(): Attribute
+    public function salaryZero(): Attribute
     {
         return new Attribute(
-            get: fn($value, $attributes) => $this->salary_data($attributes)->rent,
+            get: fn($value, $attributes) => $this->status == 0 && !filter_var($this->qualification, FILTER_VALIDATE_INT, array('options' => array('min_range' => 1, 'max_range' => 10))) ? $this->salary_data->basic*.125 : 0,
             set:null
         );
     }
 
-    public function salaryTransport(): Attribute
+    public function salaryNut(): Attribute
     {
         return new Attribute(
-            get: fn($value, $attributes) => $this->salary_data($attributes)->transport,
+            get: fn($value, $attributes) => $this->status == 1 ? $this->salary_data->basic * .03 : 0,
             set:null
         );
     }
 
-    public function salaryUtility(): Attribute
+    public function salaryNulge(): Attribute
     {
         return new Attribute(
-            get: fn($value, $attributes) => $this->salary_data($attributes)->utility,
+            get: fn($value, $attributes) => $this->status == 0 ? $this->salary_data->basic * .03 : 0,
             set:null
         );
     }
 
-    public function salaryDomesticStaff(): Attribute
+    public function AnnualPension(): Attribute
     {
         return new Attribute(
-            get: fn($value, $attributes) => $this->salary_data($attributes)->domestic_staff,
+            get: fn($value, $attributes) => Pension::where('years', $this->service_years)->first() ? (Pension::where('years', $this->service_years)->first()->pension/100) * $this->salary_net * 12 : 0,
             set:null
         );
     }
 
-    public function salaryEnt(): Attribute
+    public function MonthlyPension(): Attribute
     {
         return new Attribute(
-            get: fn($value, $attributes) => $this->salary_data($attributes)->ent,
+            get: fn($value, $attributes) => number_format($this->annual_pension/12, 2),
             set:null
         );
     }
 
-    public function salaryMeals(): Attribute
+    public function ServiceYears(): Attribute
     {
         return new Attribute(
-            get: fn($value, $attributes) => $this->salary_data($attributes)->meals,
-            set:null
-        );
-    }
-
-    public function salaryPaye(): Attribute
-    {
-        return new Attribute(
-            get: fn($value, $attributes) => $this->salary_data($attributes)->paye,
-            set:null
-        );
-    }
-
-    public function salaryUnion(): Attribute
-    {
-        return new Attribute(
-            get: fn($value, $attributes) => $this->salary_data($attributes)->union,
+            get: fn($value, $attributes) => Carbon::parse($this->date_of_appointment)->diffInYears($this->expected_date_of_retirement) >= 35 ? 35 : Carbon::parse($this->date_of_appointment)->diffInYears($this->expected_date_of_retirement),
             set:null
         );
     }
@@ -114,14 +93,30 @@ class Staff extends Model
     public function salaryTd(): Attribute
     {
         return new Attribute(
-            get: fn($value, $attributes) => $this->salary_data($attributes)->td,
+            get: fn($value, $attributes) => number_format($this->salary_nut + $this->salary_nulge + $this->salary_data->paye, 2),
             set:null
         );
     }
-    public function salaryGross(): Attribute
+    public function salaryNet(): Attribute
     {
         return new Attribute(
-            get: fn($value, $attributes) => $this->salary_data($attributes)->gross,
+            get: fn($value, $attributes) => $this->salary_data->gross - to_num($this->salary_td),
+            set:null
+        );
+    }
+
+    public function StaffStatus(): Attribute
+    {
+        return new Attribute(
+            get: fn($value, $attributes) => $this->status == 1 ? "Teacher" : "Non Teacher",
+            set:null
+        );
+    }
+
+    public function Difference(): Attribute
+    {
+        return new Attribute(
+            get: fn($value, $attributes) => $this->salary_net - to_num($this->monthly_pension),
             set:null
         );
     }
@@ -174,6 +169,10 @@ class Staff extends Model
         return $this->belongsTo(MaritalStatus::class);
     }
 
+    public function certificates(){
+        return $this->hasMany(Certificate::class);
+    }
+
     public function scopeSearch($query, $term)
     {
         return $query->where(
@@ -193,10 +192,12 @@ class Staff extends Model
         return $this->lga->percent;
     }
 
-    public function salary_data($attributes)
+    public function salary_data()
     {
-        [$grade, $step] = explode("/", $attributes["salary_grade_level"]);
-        return Salary::where('grade', $grade)->where('step', $step)->where('payment_method', $this->lga->percent)->first();
+            //[$grade, $step] = explode("/", $this->salary_grade_level);
+            //return Salary::where('grade', $grade)->where('step', $step)->where('payment_method', $this->lga->percent)->first();
+        return $this->belongsTo(Salary::class, ['salary_structure', 'salary_grade', 'salary_step'], ['payment_method', 'grade', 'step']);
+     
     }
 
     public function getTotalAttribute()

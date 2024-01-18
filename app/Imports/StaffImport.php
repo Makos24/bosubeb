@@ -4,12 +4,14 @@ namespace App\Imports;
 
 use App\Models\Bank;
 use App\Models\Cadre;
+use App\Models\Certificate;
 use App\Models\DutyStation;
 use App\Models\LGA;
 use App\Models\School;
 use App\Models\Staff;
 use App\Models\State;
 use Carbon\Carbon;
+use Carbon\Exceptions\InvalidFormatException;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\Importable;
@@ -45,13 +47,13 @@ class StaffImport implements ToCollection,
             //dd($row);
             $lga_id = LGA::where('name', $row['lga'])->first() ? Lga::where('name', $row['lga'])->first()->id : '';
 
-        $school_id = School::firstOrCreate([
-                'name' => $row['school'],
-                'lga_id' => $lga_id
-            ]
-        )->id;
+            $school_id = School::firstOrCreate([
+                    'name' => $row['school'],
+                    'lga_id' => $lga_id
+                ]
+            )->id;
         
-            Staff::updateOrCreate(
+            $staff = Staff::firstOrCreate(
                 [
                     'form_no' =>  $row['form_no']
                 ],
@@ -68,17 +70,19 @@ class StaffImport implements ToCollection,
                     'qualification' => $row['qualification'],  
                     'phone' => $row['phone_no'],  
                     'nin' => $row['nin_no'],  
-                    'lga_of_origin_id' => LGA::where('name', $row['lga_of_origin'])->first()->id,  
+                    'lga_of_origin_id' => isset(LGA::where('name', $row['lga_of_origin'])->first()->id) ? : null,  
                     'state_id' => State::where('name', $row['state_of_origin'])->first()->id,  
                     'blood_group' => $row['blood_group'],  
                     'status' => $row['status'],  
                     'cadre' => Cadre::firstOrCreate(['name' => $row['cadrerank']])->id,  
                     'salary_id' => 1,  
-                    // 'salary_id' => $row['salary_structure_based_on'],  
+                    'salary_structure' => $row['salary_structure_based_on'],  
+                    'salary_grade' => explode("/", $row['grade_level_of_your_salary'])[0],  
+                    'salary_step' => explode("/", $row['grade_level_of_your_salary'])[1],  
                     'grade_level' => $row['present_grade_levelhighest_promotion'],  
                     'salary_grade_level' => $row['grade_level_of_your_salary'],  
-                    'gross_salary' => str_replace(["'",","],"",$row['present_gross_salary']),  
-                    'net_salary' => str_replace(["'",","],"",$row['present_net_salary']),  
+                    'gross_salary' => to_num($row['present_gross_salary']),  
+                    'net_salary' => to_num($row['present_net_salary']),  
                     'bank_id' => Bank::firstOrCreate(['name' => $row['bank_name']])->id,  
                     'account_name' => $row['account_name'],  
                     'account_number' => $row['account_no'],  
@@ -102,6 +106,114 @@ class StaffImport implements ToCollection,
                     // 'expected_date_of_retirement' => Date::excelToDateTimeObject($row['expected_date_of_retirement']), 
                     
             ]);
+
+            if(strlen($row['primary_school_attended']) > 5){
+                Certificate::firstOrCreate(
+                    [
+                        'staff_id' => $staff->id,
+                        'certificate' => $row['certificate1']
+                    ],
+                    [
+                        'from' => $row['from1'],
+                        'to' => $row['to1'],
+                        'school_attended' => $row['primary_school_attended'],
+                    ]
+                );
+            }
+            
+            if(strlen($row['secondary_school_attended']) > 5){
+                Certificate::firstOrCreate(
+                    [
+                        'staff_id' => $staff->id,
+                        'certificate' => $row['certificate2']
+                    ],
+                    [
+                        'from' => $row['from2'],
+                        'to' => $row['to2'],
+                        'school_attended' => $row['secondary_school_attended'],
+                    ]
+                );
+
+            }
+            if(strlen($row['other_school_attended']) > 5){
+            Certificate::firstOrCreate(
+                [
+                    'staff_id' => $staff->id,
+                    'certificate' => $row['certificate3']
+                ],
+                [
+                    'from' => $row['from3'],
+                    'to' => $row['to3'],
+                    'school_attended' => $row['other_school_attended'],
+                ]
+            );
+        }
+        if(strlen($row['college_of_education_attended']) > 5){
+            Certificate::firstOrCreate(
+                [
+                    'staff_id' => $staff->id,
+                    'certificate' => $row['certificate4']
+                ],
+                [
+                    'from' => $row['from4'],
+                    'to' => $row['to4'],
+                    'school_attended' => $row['college_of_education_attended'],
+                ]
+            );
+        }
+        if(strlen($row['polytechnic_attended']) > 5){
+            Certificate::firstOrCreate(
+                [
+                    'staff_id' => $staff->id,
+                    'certificate' => $row['certificate5']
+                ],
+                [
+                    'from' => $row['from5'],
+                    'to' => $row['to5'],
+                    'school_attended' => $row['polytechnic_attended'],
+                ]
+            );
+        }
+        if(strlen($row['university_attended_first_degree']) > 5){
+            Certificate::firstOrCreate(
+                [
+                    'staff_id' => $staff->id,
+                    'certificate' => $row['certificate6']
+                ],
+                [
+                    'from' => $row['from6'],
+                    'to' => $row['to6'],
+                    'school_attended' => $row['university_attended_first_degree'],
+                ]
+            );
+        }
+        if(strlen($row['university_attended_second_degree']) > 5){
+            Certificate::firstOrCreate(
+                [
+                    'staff_id' => $staff->id,
+                    'certificate' => $row['certificate7']
+                ],
+                [
+                    'from' => $row['from7'],
+                    'to' => $row['to7'],
+                    'school_attended' => $row['university_attended_second_degree'],
+                ]
+            );
+        }
+
+        if(strlen($row['university_attended_third_degree']) > 5){
+            Certificate::firstOrCreate(
+                [
+                    'staff_id' => $staff->id,
+                    'certificate' => $row['certificate8']
+                ],
+                [
+                    'from' => $row['from8'],
+                    'to' => $row['to8'],
+                    'school_attended' => $row['university_attended_third_degree'],
+                ]
+            );
+        }
         }
     }
 
@@ -126,12 +238,28 @@ class StaffImport implements ToCollection,
 
     public function transformDate($value, $format = 'd/m/Y')
 {
-    try {
-        return is_numeric($value) ? Carbon::instance(Date::excelToDateTimeObject($value)) : Carbon::createFromFormat($format, $value);
-    } catch (\ErrorException $e) {
-        dd($e);
-        return Carbon::createFromFormat($format, $value);
-    }
+
+    try { 
+        return Carbon::createFromFormat($format, $value); 
+    } catch (InvalidFormatException $e) {
+         try { 
+            return Carbon::createFromFormat('d/m/Y', $value); 
+        } catch (InvalidFormatException $e) { 
+            try { 
+                return Carbon::createFromFormat('m/d/Y', $value); 
+            } catch (InvalidFormatException $e) 
+            { 
+                // handle the error or return null
+                return null;
+             } 
+            } 
+        }
+    // try {
+    //     return is_numeric($value) ? Carbon::instance(Date::excelToDateTimeObject($value)) : Carbon::createFromFormat($format, $value);
+    // } catch (\ErrorException $e) {
+    //     //dd($e);
+    //     return Carbon::createFromFormat($format, $value);
+    // }
 }
 
     // public function onFailure(Failure ...$failure)

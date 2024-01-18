@@ -10,19 +10,20 @@
 <div class="flex justify-between p-6 inline-block relative grid gap-6 md:grid-cols-2 xl:grid-cols-4">
 
     <div class="min-w-0 flex-1">
-              <label class="fi-fo-field-wrp-label inline-flex items-center gap-x-3" for="ministry" >Rank</label>
+              <label class="fi-fo-field-wrp-label inline-flex items-center gap-x-3" for="ministry" >Status</label>
               <div class="fi-input-wrp flex rounded-lg shadow-sm ring-1 transition duration-75 bg-white focus-within:ring-2 dark:bg-white/5 ring-gray-950/10 focus-within:ring-primary-600 dark:ring-white/20 dark:focus-within:ring-primary-500 fi-fo-select">        
-              <x-filament::input.select wire:model.live="ministry">
+              <x-filament::input.select wire:model.live="status">
                 <option value="">Select Rank</option>
                 
-                @foreach($ministries as $minstry)
-                  <option value="{{$minstry->cadre}}">{{$minstry->cadre}}</option>
-                @endforeach
+            
+                  <option value="1">Teacher</option>
+                  <option value="0">Non Teacher</option>
+
               </x-filament::input.select>
         </div>
 </div>
                 <div class="min-w-0 flex-1">
-              <label class="fi-fo-field-wrp-label inline-flex items-center gap-x-3" for="email" class="mx-2" >Narration</label>
+              <label class="fi-fo-field-wrp-label inline-flex items-center gap-x-3" for="email" class="mx-2" >Cadre</label>
               <div class="fi-input-wrp flex rounded-lg shadow-sm ring-1 transition duration-75 bg-white focus-within:ring-2 dark:bg-white/5 ring-gray-950/10 focus-within:ring-primary-600 dark:ring-white/20 dark:focus-within:ring-primary-500 fi-fo-select">      
               <x-filament::input.select wire:model.live="agency">
                 <option value="">Select Narration</option>
