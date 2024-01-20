@@ -23,6 +23,7 @@ class ListStaff extends ListRecords
     protected function getHeaderActions(): array
     {
         set_time_limit(500);
+        
         return [
             Actions\CreateAction::make(),
             Action::make('Upload Staff Records')

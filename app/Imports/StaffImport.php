@@ -45,7 +45,7 @@ class StaffImport implements ToCollection,
         foreach ($rows as $row) 
         {
             //dd($row);
-            $lga_id = LGA::where('name', $row['lga'])->first() ? Lga::where('name', $row['lga'])->first()->id : '';
+            $lga_id = LGA::where('name', ucwords(strtolower($row['lga'])))->first() ? Lga::where('name', ucwords(strtolower($row['lga'])))->first()->id : '';
 
             $school_id = School::firstOrCreate([
                     'name' => $row['school'],
@@ -70,8 +70,8 @@ class StaffImport implements ToCollection,
                     'qualification' => $row['qualification'],  
                     'phone' => $row['phone_no'],  
                     'nin' => $row['nin_no'],  
-                    'lga_of_origin_id' => isset(LGA::where('name', $row['lga_of_origin'])->first()->id) ? : null,  
-                    'state_id' => State::where('name', $row['state_of_origin'])->first()->id,  
+                    'lga_of_origin_id' => isset(LGA::where('name', ucwords(strtolower($row['lga_of_origin'])))->first()->id) ? : null,  
+                    'state_id' => State::where('name', ucwords(strtolower($row['state_of_origin'])))->first()->id,  
                     'blood_group' => $row['blood_group'],  
                     'status' => $row['status'],  
                     'cadre' => Cadre::firstOrCreate(['name' => $row['cadrerank']])->id,  
@@ -233,7 +233,7 @@ class StaffImport implements ToCollection,
 
     public function chunkSize(): int
     {
-        return 1000;
+        return 50;
     }
 
     public function transformDate($value, $format = 'd/m/Y')
