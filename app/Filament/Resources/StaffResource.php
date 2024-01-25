@@ -32,6 +32,8 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Maatwebsite\Excel\Facades\Excel;
+use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
+
 
 class StaffResource extends Resource
 {
@@ -320,18 +322,23 @@ class StaffResource extends Resource
                 SelectFilter::make('lga_id')
                 ->label('LGA')
                 ->options(Lga::where('state_id', 8)->get()->pluck("name", "id")->toArray()),
-                SelectFilter::make('school_id')
-                ->label('School')
-                ->options(School::get()->pluck("name", "id")->toArray())
+                SelectFilter::make('status')
+                ->label('Status')
+                ->options([1 => "Teacher", 0 => "Non Teacher"]),
+                SelectFilter::make('qualification')
+                ->multiple()
+                ->options(Qualification::get()->pluck("name", "id")->toArray()),
                 
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
+                    ExportBulkAction::make(),
                     Tables\Actions\DeleteBulkAction::make(),
-                    BulkAction::make('export')->action(fn() => (Excel::download(new LGAStaffExport(), 'allstaff.xlsx'))),
+                    //BulkAction::make('export')->action(fn() => (Excel::download(new LGAStaffExport(), 'allstaff.xlsx'))),
 
                 ]),
                 
@@ -351,6 +358,7 @@ class StaffResource extends Resource
             'index' => Pages\ListStaff::route('/'),
             'create' => Pages\CreateStaff::route('/create'),
             'edit' => Pages\EditStaff::route('/{record}/edit'),
+            'view' => Pages\ViewStaff::route('/{record}'),
         ];
     }
 }

@@ -5,6 +5,7 @@ namespace App\Filament\Resources\PayrollResource\Pages;
 use App\Exports\PayrollExport;
 use App\Filament\Resources\PayrollResource;
 use App\Models\Staff;
+use Carbon\Carbon;
 use Filament\Actions;
 use Filament\Actions\Action;
 use Filament\Resources\Pages\ListRecords;
@@ -21,7 +22,7 @@ class ListPayrolls extends ListRecords
             Action::make('export_pay')->label("Download All Payroll")->action(function() {
                 $payroll =  Staff::with(["lga", "school", "salary_data"])->where('expected_date_of_retirement', '>=', \Carbon\Carbon::today())->get();
                 //dd($payroll);
-               return Excel::download(new PayrollExport("Summary", $payroll), 'allstaff.xlsx');
+               return Excel::download(new PayrollExport("Summary", $payroll), Carbon::now().'Payroll.xlsx');
             }),
         ];
     }

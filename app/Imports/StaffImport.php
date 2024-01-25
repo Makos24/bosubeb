@@ -44,8 +44,14 @@ class StaffImport implements ToCollection,
         //dd($rows[0]);
         foreach ($rows as $row) 
         {
+            $nin = $row['nin_no'];
+            if ($this->isDuplicateNIN($nin)) {
+                continue;
+            }
             //dd($row);
-            $lga_id = LGA::where('name', ucwords(strtolower($row['lga'])))->first() ? Lga::where('name', ucwords(strtolower($row['lga'])))->first()->id : '';
+            $lga_id = LGA::where('name', ucwords(strtolower($row['lga'])))->first() ? LGA::where('name', ucwords(strtolower($row['lga'])))->first()->id : '';
+            
+            $bank_id = Bank::where('name', $row['bank_name'])->orWhere('other_name', $row['bank_name'])->first() ? Bank::where('name', $row['bank_name'])->orWhere('other_name', $row['bank_name'])->first()->id : '';
 
             $school_id = School::firstOrCreate([
                     'name' => $row['school'],
@@ -83,7 +89,7 @@ class StaffImport implements ToCollection,
                     'salary_grade_level' => $row['grade_level_of_your_salary'],  
                     'gross_salary' => to_num($row['present_gross_salary']),  
                     'net_salary' => to_num($row['present_net_salary']),  
-                    'bank_id' => Bank::firstOrCreate(['name' => $row['bank_name']])->id,  
+                    'bank_id' => $bank_id,  
                     'account_name' => $row['account_name'],  
                     'account_number' => $row['account_no'],  
                     'bvn' => $row['bvn_no'],  
@@ -220,10 +226,10 @@ class StaffImport implements ToCollection,
     public function rules(): array
     {
         return [
-            '*.email_address' => ['nullable','email', 'unique:staff,email'],
-            '*.form_no' => ['required', 'unique:staff,form_no'],
-            '*.bvn_no' => ['required', 'unique:staff,bvn'],
-            '*.nin_no' => ['required', 'unique:staff,nin'],
+            'email_address' => ['nullable','email', 'unique:staff,email'],
+            'form_no' => ['required', 'unique:staff,form_no'],
+            'bvn_no' => ['required', 'unique:staff,bvn'],
+            'nin_no' => ['required', 'unique:staff,nin'],
             'date_of_1st_appointment' => ['required'],
             'date_of_last_promotion' => ['required'],
             'expected_date_of_retirement' => ['required'],
@@ -262,7 +268,19 @@ class StaffImport implements ToCollection,
     // }
 }
 
-    // public function onFailure(Failure ...$failure)
+    public function onFailure(Failure ...$failure)
+    {
+        
+    }
+
+    protected function isDuplicateNIN($nin)
+    {
+        // Check if the NIN already exists in the staff table
+        return Staff::where('nin', $nin)->exists();
+    }
+    // protected function isDuplicateBVN($nin)
     // {
+    //     // Check if the NIN already exists in the staff table
+    //     return Staff::where('nin', $nin)->exists();
     // }
 }

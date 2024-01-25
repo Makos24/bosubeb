@@ -4,8 +4,11 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\SchoolResource\Pages;
 use App\Filament\Resources\SchoolResource\RelationManagers;
+use App\Models\Lga;
 use App\Models\School;
 use Filament\Forms;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -27,14 +30,16 @@ class SchoolResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('acronymn')
+                TextInput::make('acronymn')
                     ->maxLength(255),
-                Forms\Components\TextInput::make('name')
+                TextInput::make('name')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('lga_id')
-                    ->required()
-                    ->numeric(),
+                    Select::make('lga_id')
+                    ->label("LGA")
+                    ->placeholder('Select lga')
+                    ->options(Lga::where('state_id', 8)->get()->pluck("name", "id")->toArray())
+                    ->required(),
             ]);
     }
 
@@ -42,12 +47,10 @@ class SchoolResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('acronymn')
-                    ->searchable(),
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('lga_id')
-                    ->numeric()
+                Tables\Columns\TextColumn::make('lga.name')
+                ->label('LGA')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()

@@ -6,6 +6,7 @@ use App\Exports\SummaryExport;
 use App\Models\Agency;
 use App\Models\Lga;
 use App\Models\Ministry;
+use App\Models\Qualification;
 use App\Models\Staff;
 use Carbon\Carbon;
 use Livewire\Component;
@@ -16,14 +17,14 @@ class Dashboard extends Component
 {
     use WithPagination;
 
-    public $ministry, $agency, $lga;
+    public $status, $qualification, $lga;
 
     public function render()
     {
-        $data = Staff::when($this->ministry, function($query, $ministry){
-            return $query->where('cadre', $ministry);
-        })->when($this->agency, function($query, $agency){
-            return $query->where('remark', $agency);
+        $data = Staff::when($this->status, function($query, $status){
+            return $query->where('status', $status);
+        })->when($this->qualification, function($query, $qualification){
+            return $query->where('qualification', $qualification);
         })->when($this->lga, function($query, $lga){
             return $query->where('lga_id', $lga);
         });
@@ -52,7 +53,7 @@ class Dashboard extends Component
             'school' => $staff_school,
             'lga_page' => $lga_page,
             'ministries' => $data->select('cadre')->distinct()->get(),
-            'agencies' => $data->select('cadre')->distinct()->get(),
+            'qualifications' => Qualification::get(),
             'lgas' => Lga::where('state_id', 8)->get()
         ]);
     }
