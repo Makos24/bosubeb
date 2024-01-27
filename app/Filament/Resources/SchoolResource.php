@@ -4,8 +4,11 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\SchoolResource\Pages;
 use App\Filament\Resources\SchoolResource\RelationManagers;
+use App\Models\Lga;
 use App\Models\School;
 use Filament\Forms;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -32,9 +35,11 @@ class SchoolResource extends Resource
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('lga_id')
-                    ->required()
-                    ->numeric(),
+                    Select::make('lga_id')
+                    ->label("LGA")
+                    ->placeholder('Select lga')
+                    ->options(Lga::where('state_id', 8)->get()->pluck("name", "id")->toArray())
+                    ->required(),
             ]);
     }
 

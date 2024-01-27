@@ -13,7 +13,7 @@ class School extends Model
 
     public function lga()
     {
-        return $this->belongsTo(Lga::class);
+        return $this->belongsTo(Lga::class, 'lga_id');
     }
 
     public function scopeSearch($query, $term)

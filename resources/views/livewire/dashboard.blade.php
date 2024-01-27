@@ -9,32 +9,8 @@
     </div>
 <div class="flex justify-between p-6 inline-block relative grid gap-6 md:grid-cols-2 xl:grid-cols-4">
 
-    <div class="min-w-0 flex-1">
-              <label class="fi-fo-field-wrp-label inline-flex items-center gap-x-3" for="ministry" >Status</label>
-              <div class="fi-input-wrp flex rounded-lg shadow-sm ring-1 transition duration-75 bg-white focus-within:ring-2 dark:bg-white/5 ring-gray-950/10 focus-within:ring-primary-600 dark:ring-white/20 dark:focus-within:ring-primary-500 fi-fo-select">        
-              <x-filament::input.select wire:model.live="status">
-                <option value="">Select Rank</option>
-                
-            
-                  <option value="1">Teacher</option>
-                  <option value="0">Non Teacher</option>
-
-              </x-filament::input.select>
-        </div>
-</div>
-                <div class="min-w-0 flex-1">
-              <label class="fi-fo-field-wrp-label inline-flex items-center gap-x-3" for="email" class="mx-2" >Cadre</label>
-              <div class="fi-input-wrp flex rounded-lg shadow-sm ring-1 transition duration-75 bg-white focus-within:ring-2 dark:bg-white/5 ring-gray-950/10 focus-within:ring-primary-600 dark:ring-white/20 dark:focus-within:ring-primary-500 fi-fo-select">      
-              <x-filament::input.select wire:model.live="agency">
-                <option value="">Select Narration</option>
-                @foreach($agencies as $agency)
-                  <option value="{{$agency->minimum_wage}}">{{$agency->minimum_wage}}</option>
-                @endforeach
-              </x-filament::input.select>
-              </div>
-        </div>
-              <div class="min-w-0 flex-1">
-              <label class="fi-fo-field-wrp-label inline-flex items-center gap-x-3" for="email" class="mx-2" >LGA</label>
+<div class="min-w-0 flex-1">
+              <label class="fi-fo-field-wrp-label inline-flex items-center gap-x-3" for="lga" class="mx-2" >LGA</label>
               <div class="fi-input-wrp flex rounded-lg shadow-sm ring-1 transition duration-75 bg-white focus-within:ring-2 dark:bg-white/5 ring-gray-950/10 focus-within:ring-primary-600 dark:ring-white/20 dark:focus-within:ring-primary-500 fi-fo-select">
               <x-filament::input.select wire:model.live="lga">
                 <option value="">Select LGA</option>
@@ -44,6 +20,30 @@
               </x-filament::input.select>    
           </div>
           </div>
+
+    <div class="min-w-0 flex-1">
+              <label class="fi-fo-field-wrp-label inline-flex items-center gap-x-3" for="status" >Status</label>
+              <div class="fi-input-wrp flex rounded-lg shadow-sm ring-1 transition duration-75 bg-white focus-within:ring-2 dark:bg-white/5 ring-gray-950/10 focus-within:ring-primary-600 dark:ring-white/20 dark:focus-within:ring-primary-500 fi-fo-select">        
+              <x-filament::input.select wire:model.live="status">
+                <option value="">Select Status</option>
+                  <option value="1">Teacher</option>
+                  <option value="0">Non Teacher</option>
+
+              </x-filament::input.select>
+        </div>
+</div>
+                <div class="min-w-0 flex-1">
+              <label class="fi-fo-field-wrp-label inline-flex items-center gap-x-3" for="email" class="mx-2" >Qualification</label>
+              <div class="fi-input-wrp flex rounded-lg shadow-sm ring-1 transition duration-75 bg-white focus-within:ring-2 dark:bg-white/5 ring-gray-950/10 focus-within:ring-primary-600 dark:ring-white/20 dark:focus-within:ring-primary-500 fi-fo-select">      
+              <x-filament::input.select wire:model.live="qualification">
+                <option value="">Select qualification</option>
+                @foreach($qualifications as $qualification)
+                  <option value="{{$qualification->id}}">{{$qualification->name}}</option>
+                @endforeach
+              </x-filament::input.select>
+              </div>
+        </div>
+              
       </div>    
 <section class="col-[--col-span-default] fi-wi-widget fi-wi-stats-overview">
 

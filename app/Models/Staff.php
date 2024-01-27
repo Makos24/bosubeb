@@ -173,6 +173,10 @@ class Staff extends Model
         return $this->hasMany(Certificate::class);
     }
 
+    public function payments(){
+        return $this->hasMany(PaymentSchedule::class);
+    }
+
     public function scopeSearch($query, $term)
     {
         return $query->where(

@@ -5,11 +5,13 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\LGAResource\Pages;
 use App\Filament\Resources\LGAResource\RelationManagers;
 use App\Models\Lga;
+use App\Models\State;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -41,7 +43,9 @@ class LGAResource extends Resource
                     ->searchable(),
             ])
             ->filters([
-                //
+                SelectFilter::make('state_id')
+                ->label('State')
+                ->options(State::get()->pluck("name", "id")->toArray()),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

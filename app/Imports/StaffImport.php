@@ -38,14 +38,27 @@ class StaffImport implements ToCollection,
     
 {
     use Importable, SkipsErrors, SkipsFailures;
+
+    protected $agency_id;
+
+    public function  __construct($agency_id)
+    {
+        $this->agency_id = $agency_id;
+    }
    
     public function collection(Collection $rows)
     {
         //dd($rows[0]);
         foreach ($rows as $row) 
         {
+            $nin = $row['nin_no'];
+            if ($this->isDuplicateNIN($nin)) {
+                continue;
+            }
             //dd($row);
-            $lga_id = LGA::where('name', $row['lga'])->first() ? Lga::where('name', $row['lga'])->first()->id : '';
+            $lga_id = LGA::where('name', ucwords(strtolower($row['lga'])))->first() ? LGA::where('name', ucwords(strtolower($row['lga'])))->first()->id : '';
+            
+            $bank_id = Bank::where('name', $row['bank_name'])->orWhere('other_name', $row['bank_name'])->first() ? Bank::where('name', $row['bank_name'])->orWhere('other_name', $row['bank_name'])->first()->id : '';
 
             $school_id = School::firstOrCreate([
                     'name' => $row['school'],
@@ -58,6 +71,7 @@ class StaffImport implements ToCollection,
                     'form_no' =>  $row['form_no']
                 ],
                 [
+                    'agency_id' => $this->agency_id,
                     'first_name' => $row['first_name'], 
                     'last_name' => $row['surname'], 
                     'middle_name' => $row['other_name'], 
@@ -70,8 +84,8 @@ class StaffImport implements ToCollection,
                     'qualification' => $row['qualification'],  
                     'phone' => $row['phone_no'],  
                     'nin' => $row['nin_no'],  
-                    'lga_of_origin_id' => isset(LGA::where('name', $row['lga_of_origin'])->first()->id) ? : null,  
-                    'state_id' => State::where('name', $row['state_of_origin'])->first()->id,  
+                    'lga_of_origin_id' => isset(LGA::where('name', ucwords(strtolower($row['lga_of_origin'])))->first()->id) ? : null,  
+                    'state_id' => State::where('name', ucwords(strtolower($row['state_of_origin'])))->first() ? State::where('name', ucwords(strtolower($row['state_of_origin'])))->first()->id : null,  
                     'blood_group' => $row['blood_group'],  
                     'status' => $row['status'],  
                     'cadre' => Cadre::firstOrCreate(['name' => $row['cadrerank']])->id,  
@@ -83,7 +97,7 @@ class StaffImport implements ToCollection,
                     'salary_grade_level' => $row['grade_level_of_your_salary'],  
                     'gross_salary' => to_num($row['present_gross_salary']),  
                     'net_salary' => to_num($row['present_net_salary']),  
-                    'bank_id' => Bank::firstOrCreate(['name' => $row['bank_name']])->id,  
+                    'bank_id' => $bank_id,  
                     'account_name' => $row['account_name'],  
                     'account_number' => $row['account_no'],  
                     'bvn' => $row['bvn_no'],  
@@ -220,10 +234,10 @@ class StaffImport implements ToCollection,
     public function rules(): array
     {
         return [
-            '*.email_address' => ['nullable','email', 'unique:staff,email'],
-            '*.form_no' => ['required', 'unique:staff,form_no'],
-            '*.bvn_no' => ['required', 'unique:staff,bvn'],
-            '*.nin_no' => ['required', 'unique:staff,nin'],
+            'email_address' => ['nullable','email', 'unique:staff,email'],
+            'form_no' => ['required', 'unique:staff,form_no'],
+            'bvn_no' => ['required', 'unique:staff,bvn'],
+            'nin_no' => ['required', 'unique:staff,nin'],
             'date_of_1st_appointment' => ['required'],
             'date_of_last_promotion' => ['required'],
             'expected_date_of_retirement' => ['required'],
@@ -233,7 +247,7 @@ class StaffImport implements ToCollection,
 
     public function chunkSize(): int
     {
-        return 1000;
+        return 50;
     }
 
     public function transformDate($value, $format = 'd/m/Y')
@@ -262,7 +276,19 @@ class StaffImport implements ToCollection,
     // }
 }
 
-    // public function onFailure(Failure ...$failure)
+    public function onFailure(Failure ...$failure)
+    {
+        
+    }
+
+    protected function isDuplicateNIN($nin)
+    {
+        // Check if the NIN already exists in the staff table
+        return Staff::where('nin', $nin)->exists();
+    }
+    // protected function isDuplicateBVN($nin)
     // {
+    //     // Check if the NIN already exists in the staff table
+    //     return Staff::where('nin', $nin)->exists();
     // }
 }
