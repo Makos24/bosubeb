@@ -60,8 +60,8 @@ class Dashboard extends Component
 
     public function clearFilters()
     {
-        $this->ministry = '';
-        $this->agency = '';
+        $this->qualification = '';
+        $this->status = '';
         $this->lga = '';
     }
 

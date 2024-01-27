@@ -38,6 +38,13 @@ class StaffImport implements ToCollection,
     
 {
     use Importable, SkipsErrors, SkipsFailures;
+
+    protected $agency_id;
+
+    public function  __construct($agency_id)
+    {
+        $this->agency_id = $agency_id;
+    }
    
     public function collection(Collection $rows)
     {
@@ -64,6 +71,7 @@ class StaffImport implements ToCollection,
                     'form_no' =>  $row['form_no']
                 ],
                 [
+                    'agency_id' => $this->agency_id,
                     'first_name' => $row['first_name'], 
                     'last_name' => $row['surname'], 
                     'middle_name' => $row['other_name'], 
@@ -77,7 +85,7 @@ class StaffImport implements ToCollection,
                     'phone' => $row['phone_no'],  
                     'nin' => $row['nin_no'],  
                     'lga_of_origin_id' => isset(LGA::where('name', ucwords(strtolower($row['lga_of_origin'])))->first()->id) ? : null,  
-                    'state_id' => State::where('name', ucwords(strtolower($row['state_of_origin'])))->first()->id,  
+                    'state_id' => State::where('name', ucwords(strtolower($row['state_of_origin'])))->first() ? State::where('name', ucwords(strtolower($row['state_of_origin'])))->first()->id : null,  
                     'blood_group' => $row['blood_group'],  
                     'status' => $row['status'],  
                     'cadre' => Cadre::firstOrCreate(['name' => $row['cadrerank']])->id,  

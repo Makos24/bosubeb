@@ -8,6 +8,7 @@ use App\Exports\LGAStaffExport;
 use App\Exports\PayrollExport;
 use App\Filament\Resources\StaffResource;
 use App\Imports\StaffImport;
+use App\Models\Agency;
 use App\Models\PaymentSchedule;
 use App\Models\Staff;
 use Carbon\Carbon;
@@ -16,6 +17,7 @@ use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Select;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Support\Enums\ActionSize;
@@ -38,13 +40,18 @@ class ListStaff extends ListRecords
                 ->required()
                 ->disk('public')
                 ->directory('files'),
+                Select::make('agency_id')
+                ->label("Category")
+                ->placeholder('Select Category')
+                ->options(Agency::get()->pluck("name", "id")->toArray())
+                ->required(),
             ])
             ->action(function ($data) {
                 //dd($data);
                 $url = storage_path('app/public/'.$data['file']);
                 //dd($url);
 
-                $import = new StaffImport;
+                $import = new StaffImport($data['agency_id']);
                 $import->import($url);
 
                 if ($import->failures()->isNotEmpty()) {

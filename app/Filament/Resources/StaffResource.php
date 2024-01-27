@@ -7,6 +7,7 @@ use App\Exports\StaffExport;
 use App\Filament\Resources\StaffResource\Pages;
 use App\Filament\Resources\StaffResource\RelationManagers;
 use App\Filament\Resources\StaffResource\RelationManagers\CertificatesRelationManager;
+use App\Filament\Resources\StaffResource\RelationManagers\PaymentsRelationManager;
 use App\Models\Bank;
 use App\Models\Cadre;
 use App\Models\DutyStation;
@@ -348,7 +349,8 @@ class StaffResource extends Resource
     public static function getRelations(): array
     {
         return [
-            CertificatesRelationManager::class
+            CertificatesRelationManager::class,
+            PaymentsRelationManager::class
         ];
     }
 
