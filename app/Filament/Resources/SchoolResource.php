@@ -27,8 +27,8 @@ class SchoolResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('acronymn')
-                    ->maxLength(255),
+                // Forms\Components\TextInput::make('acronymn')
+                //     ->maxLength(255),
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255),
@@ -42,12 +42,12 @@ class SchoolResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('acronymn')
-                    ->searchable(),
+                // Tables\Columns\TextColumn::make('acronymn')
+                //     ->searchable(),
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('lga_id')
-                    ->numeric()
+                Tables\Columns\TextColumn::make('lga.name')
+                    ->label('LGA')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()

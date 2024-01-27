@@ -9,6 +9,7 @@ use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -35,7 +36,9 @@ class LGAResource extends Resource
     {
         return $table
             ->columns([
-                //
+                TextColumn::make('name')
+                ->label('Name')
+                    ->searchable(),
             ])
             ->filters([
                 //
@@ -64,5 +67,10 @@ class LGAResource extends Resource
             'create' => Pages\CreateLGA::route('/create'),
             'edit' => Pages\EditLGA::route('/{record}/edit'),
         ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->where('state_id', 8);
     }
 }
