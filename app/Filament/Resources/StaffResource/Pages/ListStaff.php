@@ -89,11 +89,11 @@ class ListStaff extends ListRecords
                         [
                             'staff_id' => $p->id,
                             'amount' => $p->net_salary,
-                            'payment_due_date' => $date->format('d/m/Y')
+                            'payment_due_date' => $date->format('Y-m-d')
                         ]);
                     }
 
-                    $payments =  PaymentSchedule::with(["staff.bank"])->where('payment_due_date', $date->format('d/m/Y'))->get();
+                    $payments =  PaymentSchedule::with(["staff.bank"])->where('payment_due_date', $date->format('Y-m-d'))->get();
                 //dd($payroll);
                     return Excel::download(new ExportPaymentSchedule("Summary", $payments), Carbon::now().'PaymentSchedule.xlsx');
 

@@ -8,6 +8,7 @@ use App\Filament\Resources\StaffResource\Pages;
 use App\Filament\Resources\StaffResource\RelationManagers;
 use App\Filament\Resources\StaffResource\RelationManagers\CertificatesRelationManager;
 use App\Filament\Resources\StaffResource\RelationManagers\PaymentsRelationManager;
+use App\Models\Agency;
 use App\Models\Bank;
 use App\Models\Cadre;
 use App\Models\DutyStation;
@@ -28,6 +29,7 @@ use Filament\Tables;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -320,16 +322,26 @@ class StaffResource extends Resource
                 
             ])
             ->filters([
+                Filter::make('suspended')
+                ->label('Suspended')
+                ->query(fn (Builder $query): Builder => $query->where('suspended', 1)),
+                Filter::make('retired')
+                ->label('Pensioners')
+                ->query(fn (Builder $query): Builder => $query->where('expected_date_of_retirement', '<=', \Carbon\Carbon::today())),
                 SelectFilter::make('lga_id')
                 ->label('LGA')
                 ->options(Lga::where('state_id', 8)->get()->pluck("name", "id")->toArray()),
                 SelectFilter::make('status')
                 ->label('Status')
                 ->options([1 => "Teacher", 0 => "Non Teacher"]),
+                SelectFilter::make('agency_id')
+                ->label('Category')
+                ->multiple()
+                ->options(Agency::get()->pluck("name", "id")->toArray()),
                 SelectFilter::make('qualification')
                 ->multiple()
                 ->options(Qualification::get()->pluck("name", "id")->toArray()),
-                
+                                
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
