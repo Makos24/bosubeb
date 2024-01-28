@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('staff', function (Blueprint $table) {
             $table->string('salary_structure');
-            $table->integer('salary_grade');
+            //$table->integer('salary_grade');
             $table->integer('salary_step');
         });
     }
