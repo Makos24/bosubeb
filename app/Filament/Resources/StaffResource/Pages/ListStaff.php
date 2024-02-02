@@ -22,6 +22,7 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Support\Enums\ActionSize;
 use Filament\Tables\Actions\BulkAction;
+use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ListStaff extends ListRecords
@@ -63,6 +64,7 @@ class ListStaff extends ListRecords
                     // ->body('Changes to the post have been saved.')
                     // ->send();
                 }
+                Storage::delete('public/' . $data['file']);
                 //Excel::import(new StaffImport, $url);
             }),
 

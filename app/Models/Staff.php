@@ -214,5 +214,20 @@ class Staff extends Model
         return $this->hasMany(Payroll::class);
     }
 
+    public function suspensions(){
+        return $this->hasMany(Suspension::class);
+    }
 
+    public function retirement(){
+        return $this->hasOne(Retirement::class);
+    }
+
+    public function loans(){
+        return $this->hasMany(Loan::class);
+    }
+
+    public function promotions(){
+        return $this->hasMany(Promotion::class);
+    }
 }
+

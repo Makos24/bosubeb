@@ -5,12 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Promotion extends Model
+class LoanPayment extends Model
 {
-    protected $guarded = ['id'];
     use HasFactory;
-
-    public function staff() {
-        return $this->belongsTo(Staff::class);
+    protected $guarded = ['id'];
+    
+    public function loan()
+    {
+        return $this->belongsTo(Loan::class);
     }
 }

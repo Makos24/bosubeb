@@ -11,10 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('staff', function (Blueprint $table) {
-            $table->string('salary_structure');
-            //$table->integer('salary_grade');
-            $table->integer('salary_step');
+        Schema::create('retirements', function (Blueprint $table) {
+            $table->id();
+            $table->integer('staff_id');
+            $table->text('reason');
+            $table->timestamps();
         });
     }
 
@@ -23,8 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('staff', function (Blueprint $table) {
-            //
-        });
+        Schema::dropIfExists('retirements');
     }
 };

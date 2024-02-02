@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\StaffResource\RelationManagers;
 
 use Filament\Forms;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
@@ -11,27 +10,18 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class CertificatesRelationManager extends RelationManager
+class PromotionsRelationManager extends RelationManager
 {
-    protected static string $relationship = 'certificates';
+    protected static string $relationship = 'promotions';
 
     public function form(Form $form): Form
     {
         return $form
             ->schema([
-                TextInput::make('school_attended')
+                Forms\Components\TextInput::make('promotion')
                     ->required()
                     ->maxLength(255),
-                    TextInput::make('certificate')
-                    ->label('Certificate Obtained')
-                    ->required()
-                    ->maxLength(255),
-                    TextInput::make('from')
-                    ->label('From (Year)')
-                    ->required()
-                    ->maxLength(255),
-                    TextInput::make('to')
-                    ->label('To (Year)')
+                Forms\Components\TextInput::make('date')
                     ->required()
                     ->maxLength(255),
             ]);
@@ -40,12 +30,10 @@ class CertificatesRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
-            ->recordTitleAttribute('certificate')
+            ->recordTitleAttribute('promotion')
             ->columns([
-                Tables\Columns\TextColumn::make('certificate'),
-                Tables\Columns\TextColumn::make('school_attended'),
-                Tables\Columns\TextColumn::make('from'),
-                Tables\Columns\TextColumn::make('to'),
+                Tables\Columns\TextColumn::make('promotion'),
+                Tables\Columns\TextColumn::make('date'),
             ])
             ->filters([
                 //

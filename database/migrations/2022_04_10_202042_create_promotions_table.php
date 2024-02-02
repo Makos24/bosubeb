@@ -16,13 +16,8 @@ class CreatePromotionsTable extends Migration
         Schema::create('promotions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('staff_id')->nullable();
-            $table->integer('from_grade')->nullable();
-            $table->integer('from_step')->nullable();
-            $table->integer('to_grade')->nullable();
-            $table->integer('to_step')->nullable();
-            $table->string('to_rank')->nullable();
-            $table->string('from_rank')->nullable();
-            $table->date('date')->nullable();
+            $table->text('promotion')->nullable();
+            $table->string('date')->nullable();
             $table->timestamps();
         });
     }

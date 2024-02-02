@@ -5,12 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Promotion extends Model
+class Retirement extends Model
 {
-    protected $guarded = ['id'];
     use HasFactory;
+    protected $guarded = ['id'];
 
-    public function staff() {
+    public function staff()
+    {
         return $this->belongsTo(Staff::class);
     }
 }
