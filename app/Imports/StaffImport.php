@@ -56,9 +56,16 @@ class StaffImport implements ToCollection,
                 continue;
             }
             //dd($row);
-            $lga_id = LGA::where('name', ucwords(strtolower($row['lga'])))->first() ? LGA::where('name', ucwords(strtolower($row['lga'])))->first()->id : '';
+            $lga_id = LGA::where('name', ucwords(strtolower($row['lga'])))->orWhere('id', $row['lga'])->first() ? LGA::where('name', ucwords(strtolower($row['lga'])))->orWhere('id', $row['lga'])->first()->id : '';
             
-            $bank_id = Bank::where('name', $row['bank_name'])->orWhere('other_name', $row['bank_name'])->first() ? Bank::where('name', $row['bank_name'])->orWhere('other_name', $row['bank_name'])->first()->id : '';
+            $bank_id = Bank::where('name', $row['bank_name'])
+                            ->orWhere('other_name', $row['bank_name'])
+                            ->orWhere('bank_code', $row['bank_name'])
+                            ->orWhere('sort_code', $row['bank_name'])->first() ? Bank::where('name', $row['bank_name'])
+                                                                                ->orWhere('other_name', $row['bank_name'])
+                                                                                ->orWhere('other_name', $row['bank_name'])
+                                                                                ->orWhere('bank_code', $row['bank_name'])
+                                                                                ->orWhere('sort_code', $row['bank_name'])->first()->id : '';
 
             $school_id = School::firstOrCreate([
                     'name' => $row['school'],

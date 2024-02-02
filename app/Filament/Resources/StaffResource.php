@@ -92,8 +92,8 @@ class StaffResource extends Resource
                 ->label("Minimum Wage")
                 ->placeholder('Select')
                 ->options([
-                    '1' => 'Qualified',
-                    '0' => 'Not Qualified',
+                    'Qualified' => 'Qualified',
+                    'Not Qualified' => 'Not Qualified',
                 ])
                 ->required(),
                 Select::make('gender_id')
@@ -118,7 +118,7 @@ class StaffResource extends Resource
                 DatePicker::make('date_of_birth')
                 ->format('d/m/Y')
                 ->required(),
-                Select::make('qualification_id')
+                Select::make('qualification')
                 ->label("Qualification")
                 ->placeholder('Select')
                 ->options(Qualification::all()->pluck("name", "id")->toArray())
@@ -153,10 +153,14 @@ class StaffResource extends Resource
                 ->label("Blood Group")
                 ->placeholder('Select')
                 ->options([
-                    'a' => 'A',
-                    'b' => 'B',
-                    'ab' => 'AB',
-                    'O' => 'O',
+                    'A+' => 'A+',
+                    'A-' => 'A-',
+                    'B+' => 'B+',
+                    'B-' => 'B-',
+                    'AB+' => 'AB+',
+                    'AB-' => 'AB-',
+                    'O+' => 'O+',
+                    'O-' => 'O-',
                 ])
                 ->required(),
                 DatePicker::make('date_of_appointment')

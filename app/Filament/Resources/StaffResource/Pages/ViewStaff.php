@@ -8,7 +8,9 @@ use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
 use Filament\Resources\Pages\ViewRecord;
 use App\Models\Staff;
+use App\Models\Suspension;
 use Carbon\Carbon;
+use Filament\Forms\Components\Textarea;
 
 class ViewStaff extends ViewRecord
 {
@@ -21,10 +23,30 @@ class ViewStaff extends ViewRecord
         return [
             $this->record->suspended == 0 ? Action::make('Suspend Staff')
             ->color('danger')
-            ->action(fn (Staff $record) => $record->update(['suspended' => 1]))
+            ->form([
+                Textarea::make('reason')
+                ->label("Reason for Suspension")
+                ->required(),
+            ])
+            ->action(function(Staff $record, $data) {
+                $record->update(['suspended' => 1]);
+                $record->suspensions()->create([
+                    'suspension_reason' => $data['reason']
+                ]);
+            } )
             ->requiresConfirmation() : Action::make('Restore Staff')
             ->color('success')
-            ->action(fn (Staff $record) => $record->update(['suspended' => 0]))
+            ->form([
+                Textarea::make('reason')
+                ->label("Reason for Restoring")
+                ->required(),
+            ])
+            ->action(function(Staff $record, $data) {
+                $record->update(['suspended' => 0]);
+                $record->suspensions()->latest()->first()->update([
+                    'restore_reason' => $data['reason']
+                ]);
+            })
             ->requiresConfirmation(),
             Action::make('Retire Staff')
             ->color('warning')
