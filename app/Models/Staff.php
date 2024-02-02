@@ -225,4 +225,9 @@ class Staff extends Model
     public function loans(){
         return $this->hasMany(Loan::class);
     }
+
+    public function promotions(){
+        return $this->hasMany(Promotion::class);
+    }
 }
+

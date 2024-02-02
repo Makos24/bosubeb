@@ -8,6 +8,7 @@ use App\Filament\Resources\StaffResource\Pages;
 use App\Filament\Resources\StaffResource\RelationManagers;
 use App\Filament\Resources\StaffResource\RelationManagers\CertificatesRelationManager;
 use App\Filament\Resources\StaffResource\RelationManagers\PaymentsRelationManager;
+use App\Filament\Resources\StaffResource\RelationManagers\PromotionsRelationManager;
 use App\Models\Agency;
 use App\Models\Bank;
 use App\Models\Cadre;
@@ -366,7 +367,8 @@ class StaffResource extends Resource
     {
         return [
             CertificatesRelationManager::class,
-            PaymentsRelationManager::class
+            PaymentsRelationManager::class,
+            PromotionsRelationManager::class
         ];
     }
 

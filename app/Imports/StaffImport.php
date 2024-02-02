@@ -7,6 +7,7 @@ use App\Models\Cadre;
 use App\Models\Certificate;
 use App\Models\DutyStation;
 use App\Models\LGA;
+use App\Models\Promotion;
 use App\Models\School;
 use App\Models\Staff;
 use App\Models\State;
@@ -48,14 +49,15 @@ class StaffImport implements ToCollection,
    
     public function collection(Collection $rows)
     {
-        //dd($rows[0]);
+        //dd($rows);
         foreach ($rows as $row) 
         {
+            //dd($row);
             $nin = $row['nin_no'];
             if ($this->isDuplicateNIN($nin)) {
                 continue;
             }
-            //dd($row);
+            // dd($row);
             $lga_id = LGA::where('name', ucwords(strtolower($row['lga'])))->orWhere('id', $row['lga'])->first() ? LGA::where('name', ucwords(strtolower($row['lga'])))->orWhere('id', $row['lga'])->first()->id : '';
             
             $bank_id = Bank::where('name', $row['bank_name'])
@@ -235,6 +237,22 @@ class StaffImport implements ToCollection,
                 ]
             );
         }
+
+        for($i = 1; $i < 7; $i++){
+            if(strlen($row['promotions_rank_and_level'.$i]) > 5){
+                Promotion::firstOrCreate(
+                    [
+                        'staff_id' => $staff->id,
+                        'promotion' => $row['promotions_rank_and_level'.$i]
+                    ],
+                    [
+                        'date' => $this->transformDate($row['dates'.$i]),
+                        
+                    ]
+                );
+            }
+        }
+
         }
     }
 

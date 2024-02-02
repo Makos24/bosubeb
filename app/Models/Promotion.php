@@ -9,4 +9,8 @@ class Promotion extends Model
 {
     protected $guarded = ['id'];
     use HasFactory;
+
+    public function staff() {
+        return $this->belongsTo(Staff::class);
+    }
 }
