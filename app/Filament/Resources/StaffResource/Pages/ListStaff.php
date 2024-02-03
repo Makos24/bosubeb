@@ -65,6 +65,11 @@ class ListStaff extends ListRecords
                     // ->send();
                 }
                 Storage::delete('public/' . $data['file']);
+
+                Notification::make() 
+                ->title('Uploaded successfully')
+                ->success()
+                ->send(); 
                 //Excel::import(new StaffImport, $url);
             }),
 
