@@ -187,7 +187,7 @@
                 Number of Non-Trainable Staff
               </h3>
               <h1 class="text-2xl font-semibold tracking-tight text-gray-950 dark:text-white">
-                {{count($nq->where('minimum_wage', 'Not Qualified')->get())}}
+                {{count($nq->where('minimum_wage', 'Not Trainable')->get())}}
               </h1>
             </div>
             
@@ -208,7 +208,7 @@
               Payments to Non-Trainable Staff
               </h3>
               <h1 class="text-2xl font-semibold tracking-tight text-gray-950 dark:text-white">
-              <span>&#8358;</span>{{number_format(($nq->where('minimum_wage', 'Not Qualified')->sum('net_salary')))}}
+              <span>&#8358;</span>{{number_format(($nq->where('minimum_wage', 'Not Trainable')->sum('net_salary')))}}
               </h1>
             </div>
             <span class="icon widget-icon text-red-500">
@@ -564,11 +564,11 @@
             
             
             <td class="fi-ta-cell p-0 first-of-type:ps-1 last-of-type:pe-1 sm:first-of-type:ps-3 sm:last-of-type:pe-3 w-1" data-label="Non-Trainable">
-              {{isset($lg[$item->id]) ? $lg[$item->id]->where('lga_id', $item->id)->where('minimum_wage', 'Not Qualified')->count() : ''}}
-              <small class="text-gray-500">({{isset($lg[$item->id]) ? number_format($lg[$item->id]->where('lga_id', $item->id)->where('minimum_wage', 'Not Qualified')->sum('net_salary')) : 0}})</small>
+              {{isset($lg[$item->id]) ? $lg[$item->id]->where('lga_id', $item->id)->where('minimum_wage', 'Not Trainable')->count() : ''}}
+              <small class="text-gray-500">({{isset($lg[$item->id]) ? number_format($lg[$item->id]->where('lga_id', $item->id)->where('minimum_wage', 'Not Trainable')->sum('net_salary')) : 0}})</small>
             </td>
-            <td class="fi-ta-cell p-0 first-of-type:ps-1 last-of-type:pe-1 sm:first-of-type:ps-3 sm:last-of-type:pe-3 w-1" data-label="Non-TrainableRetired">{{isset($lg[$item->id]) ? $lg[$item->id]->where('lga_id', $item->id)->where('minimum_wage', 'Not Qualified')->where('expected_date_of_retirement', '<=', \Carbon\Carbon::today())->count() : ''}}
-            <small class="text-gray-500">({{isset($lg[$item->id]) ? number_format($lg[$item->id]->where('minimum_wage', 'Not Qualified')->where('expected_date_of_retirement', '<=', \Carbon\Carbon::today())->sum('net_salary')) : 0}})</small>
+            <td class="fi-ta-cell p-0 first-of-type:ps-1 last-of-type:pe-1 sm:first-of-type:ps-3 sm:last-of-type:pe-3 w-1" data-label="Non-TrainableRetired">{{isset($lg[$item->id]) ? $lg[$item->id]->where('lga_id', $item->id)->where('minimum_wage', 'Not Trainable')->where('expected_date_of_retirement', '<=', \Carbon\Carbon::today())->count() : ''}}
+            <small class="text-gray-500">({{isset($lg[$item->id]) ? number_format($lg[$item->id]->where('minimum_wage', 'Not Trainable')->where('expected_date_of_retirement', '<=', \Carbon\Carbon::today())->sum('net_salary')) : 0}})</small>
             </td>
 
             <td class="fi-ta-cell p-0 first-of-type:ps-1 last-of-type:pe-1 sm:first-of-type:ps-3 sm:last-of-type:pe-3 w-1" data-label="Total">
@@ -605,11 +605,11 @@
             
             
             <th data-label="Non-Trainable">
-              {{isset($nq) ? $nq->where('minimum_wage', 'Not Qualified')->count() : ''}}
-              <small class="text-gray-500">({{isset($nq) ? number_format($nq->where('minimum_wage', 'Not Qualified')->sum('net_salary')) : 0}})</small>
+              {{isset($nq) ? $nq->where('minimum_wage', 'Not Trainable')->count() : ''}}
+              <small class="text-gray-500">({{isset($nq) ? number_format($nq->where('minimum_wage', 'Not Trainable')->sum('net_salary')) : 0}})</small>
             </th>
-            <th data-label="Non-TrainableRetired">{{isset($nq) ? $nq->where('minimum_wage', 'Not Qualified')->where('expected_date_of_retirement', '<=', \Carbon\Carbon::today())->count() : ''}}
-            <small class="text-gray-500">({{isset($nq) ? number_format($nq->where('minimum_wage', 'Not Qualified')->where('expected_date_of_retirement', '<=', \Carbon\Carbon::today())->sum('net_salary')) : 0}})</small>
+            <th data-label="Non-TrainableRetired">{{isset($nq) ? $nq->where('minimum_wage', 'Not Trainable')->where('expected_date_of_retirement', '<=', \Carbon\Carbon::today())->count() : ''}}
+            <small class="text-gray-500">({{isset($nq) ? number_format($nq->where('minimum_wage', 'Not Trainable')->where('expected_date_of_retirement', '<=', \Carbon\Carbon::today())->sum('net_salary')) : 0}})</small>
             </th>
 
             <th data-label="Total">
