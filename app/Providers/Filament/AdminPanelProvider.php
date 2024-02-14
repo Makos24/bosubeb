@@ -66,7 +66,11 @@ class AdminPanelProvider extends PanelProvider
                      ->label('Main Menu'),
                     //  ->icon('heroicon-o-shopping-cart'),
                 NavigationGroup::make()
-                    ->label('Payroll')
+                    ->label('Payroll'),
+                    NavigationGroup::make()
+    ->label('Settings')
+    //->icon('heroicon-o-cog-6-tooth')
+    ->collapsible(true),
                     // ->icon('heroicon-o-pencil'),
             ]);
     }

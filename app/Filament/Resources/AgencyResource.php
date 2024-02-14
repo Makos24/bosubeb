@@ -20,6 +20,8 @@ class AgencyResource extends Resource
     protected static ?string $model = Agency::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationGroup = 'Main Menu';
+
 
     public static function form(Form $form): Form
     {

@@ -68,13 +68,13 @@ class StaffImport implements ToCollection,
                                                                                 ->orWhere('other_name', $row['bank_name'])
                                                                                 ->orWhere('bank_code', $row['bank_name'])
                                                                                 ->orWhere('sort_code', $row['bank_name'])->first()->id : '';
-
-            $school_id = School::firstOrCreate([
-                    'name' => $row['school'],
-                    'lga_id' => $lga_id
-                ]
-            )->id;
-        
+            // if(strlen($row['school']) > 3){
+            // $school_id = School::firstOrCreate([
+            //         'name' => $row['school'],
+            //         'lga_id' => $lga_id
+            //     ]
+            // )->id;
+            // }
             $staff = Staff::firstOrCreate(
                 [
                     'form_no' =>  $row['form_no']
@@ -85,11 +85,11 @@ class StaffImport implements ToCollection,
                     'last_name' => $row['surname'], 
                     'middle_name' => $row['other_name'], 
                     'name' => $row['first_name'].' '.$row['other_name'].' '.$row['surname'],
-                    'duty_station' => DutyStation::firstOrCreate(['name' => $row['duty_station_lga'], 'lga_id' => $lga_id])->id, 
+                    //'duty_station' => DutyStation::firstOrCreate(['name' => $row['duty_station_lga'], 'lga_id' => $lga_id])->id, 
                     'minimum_wage' => $row['minimum_wage'], 
                     'gender_id' => $row['gender'] == "MALE" ? 1 : 2, 
                     'marital_status_id' => $row['marital_status'] == "Single" ? 1 : 2,
-                    'date_of_birth' => $this->transformDate($row['date_of_birth']),
+                    //'date_of_birth' => $this->transformDate($row['date_of_birth']),
                     'qualification' => $row['qualification'],  
                     'phone' => $row['phone_no'],  
                     'nin' => $row['nin_no'],  
@@ -97,9 +97,10 @@ class StaffImport implements ToCollection,
                     'state_id' => State::where('name', ucwords(strtolower($row['state_of_origin'])))->first() ? State::where('name', ucwords(strtolower($row['state_of_origin'])))->first()->id : null,  
                     'blood_group' => $row['blood_group'],  
                     'status' => $row['status'],  
-                    'cadre' => Cadre::firstOrCreate(['name' => $row['cadrerank']])->id,  
+                    //'cadre' => Cadre::firstOrCreate(['name' => $row['cadrerank']])->id,  
                     'salary_id' => 1,  
-                    'salary_structure' => is_numeric($row['salary_structure_based_on']) && $row['salary_structure_based_on'] < 1 ? round((float)$row['salary_structure_based_on']*100).'%' : $row['salary_structure_based_on'],  
+                    //'salary_structure' => is_numeric($row['salary_structure_based_on']) && $row['salary_structure_based_on'] < 1 ? round((float)$row['salary_structure_based_on']*100).'%' : $row['salary_structure_based_on'],  
+                    'salary_structure' => $row['salary_structure_based_on'],  
                     'salary_grade' => explode("/", $row['grade_level_of_your_salary'])[0],  
                     'salary_step' => explode("/", $row['grade_level_of_your_salary'])[1],  
                     'grade_level' => $row['present_grade_levelhighest_promotion'],  
@@ -117,13 +118,13 @@ class StaffImport implements ToCollection,
                     'next_of_kin_address' => $row['next_of_kin_address'], 
                     'next_of_kin_relationship' => $row['relationship_with_next_of_kin'], 
                     'lga_id' => $lga_id, 
-                    'school_id' => $school_id,
+                    //'school_id' => $school_id,
                     // 'date_of_appointment' => $row['date_of_1st_appointment'], 
                     // 'date_of_last_promotion' => $row['date_of_last_promotion'], 
                     // 'expected_date_of_retirement' => $row['expected_date_of_retirement'], 
-                    'date_of_appointment' => $this->transformDate($row['date_of_1st_appointment']),
-                    'date_of_last_promotion' => $this->transformDate($row['date_of_last_promotion']),
-                    'expected_date_of_retirement' => $this->transformDate($row['expected_date_of_retirement']),
+                    //'date_of_appointment' => $this->transformDate($row['date_of_1st_appointment']),
+                    //'date_of_last_promotion' => $this->transformDate($row['date_of_last_promotion']),
+                    //'expected_date_of_retirement' => $this->transformDate($row['expected_date_of_retirement']),
                     // 'date_of_appointment' => Date::excelToDateTimeObject($row['date_of_1st_appointment']), 
                     // 'date_of_last_promotion' => Date::excelToDateTimeObject($row['date_of_last_promotion']), 
                     // 'expected_date_of_retirement' => Date::excelToDateTimeObject($row['expected_date_of_retirement']), 
@@ -261,12 +262,12 @@ class StaffImport implements ToCollection,
         return [
             'email_address' => ['nullable','email', 'unique:staff,email'],
             'form_no' => ['required', 'unique:staff,form_no'],
-            'bvn_no' => ['required', 'unique:staff,bvn'],
-            'nin_no' => ['required', 'unique:staff,nin'],
-            'date_of_1st_appointment' => ['required'],
-            'date_of_last_promotion' => ['required'],
-            'expected_date_of_retirement' => ['required'],
-            'date_of_birth' => ['required'],
+            'bvn_no' => ['nullable', 'unique:staff,bvn'],
+            'nin_no' => ['nullable', 'unique:staff,nin'],
+            'date_of_1st_appointment' => ['nullable'],
+            'date_of_last_promotion' => ['nullable'],
+            'expected_date_of_retirement' => ['nullable'],
+            'date_of_birth' => ['nullable'],
         ];
     }
 
