@@ -6,7 +6,7 @@ use App\Models\Bank;
 use App\Models\Cadre;
 use App\Models\Certificate;
 use App\Models\DutyStation;
-use App\Models\LGA;
+use App\Models\Lga;
 use App\Models\Promotion;
 use App\Models\School;
 use App\Models\Staff;
@@ -40,11 +40,11 @@ class StaffImport implements ToCollection,
 {
     use Importable, SkipsErrors, SkipsFailures;
 
-    protected $agency_id;
+    protected $category_id;
 
-    public function  __construct($agency_id)
+    public function  __construct($category_id)
     {
-        $this->agency_id = $agency_id;
+        $this->category_id = $category_id;
     }
    
     public function collection(Collection $rows)
@@ -54,11 +54,11 @@ class StaffImport implements ToCollection,
         {
             //dd($row);
             $nin = $row['nin_no'];
-            if ($this->isDuplicateNIN($nin)) {
+            if ($this->isDuplicateNIN($nin) || $row['account_no'] == "0000000000") {
                 continue;
             }
             // dd($row);
-            $lga_id = LGA::where('name', ucwords(strtolower($row['lga'])))->orWhere('id', $row['lga'])->first() ? LGA::where('name', ucwords(strtolower($row['lga'])))->orWhere('id', $row['lga'])->first()->id : '';
+            $lga_id = Lga::where('name', ucwords(strtolower($row['lga'])))->orWhere('id', $row['lga'])->first() ? Lga::where('name', ucwords(strtolower($row['lga'])))->orWhere('id', $row['lga'])->first()->id : null;
             
             $bank_id = Bank::where('name', $row['bank_name'])
                             ->orWhere('other_name', $row['bank_name'])
@@ -80,7 +80,8 @@ class StaffImport implements ToCollection,
                     'form_no' =>  $row['form_no']
                 ],
                 [
-                    'agency_id' => $this->agency_id,
+                    'category_id' => $this->category_id,
+                    'agency_id' => $row['agency'],
                     'first_name' => $row['first_name'], 
                     'last_name' => $row['surname'], 
                     'middle_name' => $row['other_name'], 
@@ -117,7 +118,7 @@ class StaffImport implements ToCollection,
                     'next_of_kin_phone' => $row['nextof_kin_no'], 
                     'next_of_kin_address' => $row['next_of_kin_address'], 
                     'next_of_kin_relationship' => $row['relationship_with_next_of_kin'], 
-                    'lga_id' => $lga_id, 
+                    //'lga_id' => $lga_id, 
                     //'school_id' => $school_id,
                     // 'date_of_appointment' => $row['date_of_1st_appointment'], 
                     // 'date_of_last_promotion' => $row['date_of_last_promotion'], 

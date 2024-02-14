@@ -92,7 +92,7 @@ class StaffResource extends Resource
                             ])
                             ->required(),
                             DatePicker::make('date_of_birth')
-                            ->format('d/m/Y')
+                            ->format('Y-m-d')
                             ->required(),
                             Select::make('qualification')
                             ->label("Qualification")
@@ -173,10 +173,10 @@ class StaffResource extends Resource
                             ->live()
                             ->visible(fn (Get $get): bool => $get('category_id') == 2),
                             DatePicker::make('date_of_appointment')
-                            ->format('d/m/Y')
+                            ->format('Y-m-d')
                             ->label('Date of First Appointment'),
                             DatePicker::make('date_of_last_promotion')
-                            ->format('d/m/Y'),
+                            ->format('Y-m-d'),
                             Select::make('cadre')
                             ->label("Present Rank/Designation")
                             ->placeholder('Select')
@@ -207,16 +207,17 @@ class StaffResource extends Resource
                                 // ...
                                 TextInput::make('school_attended')
                                 ->maxLength(255),
-                                DatePicker::make('from')
-                                ->native(false)
-                                ->format('YYYY')
-                                ->label('From (Year)'),
-                                DatePicker::make('to')
-                                ->format('YYYY')
-                                ->label('To (Year)'),
                                 TextInput::make('certificate')
                                 ->label('Qualification Obtained')
                                 ->maxLength(255),
+                                DatePicker::make('from')
+                                ->native(false)
+                                ->format('Y-m-d')
+                                ->label('From (Year)'),
+                                DatePicker::make('to')
+                                ->format('Y-m-d')
+                                ->label('To (Year)'),
+                               
                                 
                                 
                             ])->columns(2)
@@ -532,19 +533,19 @@ class StaffResource extends Resource
                 Filter::make('retired')
                 ->label('Pensioners')
                 ->query(fn (Builder $query): Builder => $query->where('expected_date_of_retirement', '<=', \Carbon\Carbon::today())),
-                SelectFilter::make('lga_id')
-                ->label('LGA')
-                ->options(Lga::where('state_id', 8)->get()->pluck("name", "id")->toArray()),
+                SelectFilter::make('category_id')
+                ->label('Category')
+                ->options(Category::query()->pluck("name", "id")),
                 SelectFilter::make('status')
                 ->label('Status')
                 ->options([1 => "Teacher", 0 => "Non Teacher"]),
                 SelectFilter::make('agency_id')
-                ->label('Category')
+                ->label('MDA')
                 ->multiple()
-                ->options(Agency::get()->pluck("name", "id")->toArray()),
+                ->options(Agency::query()->pluck("name", "id")),
                 SelectFilter::make('qualification')
                 ->multiple()
-                ->options(Qualification::get()->pluck("name", "id")->toArray()),
+                ->options(Qualification::query()->pluck("name", "id")),
                                 
             ])
             ->actions([

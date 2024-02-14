@@ -9,6 +9,7 @@ use App\Exports\PayrollExport;
 use App\Filament\Resources\StaffResource;
 use App\Imports\StaffImport;
 use App\Models\Agency;
+use App\Models\Category;
 use App\Models\PaymentSchedule;
 use App\Models\Staff;
 use Carbon\Carbon;
@@ -41,10 +42,10 @@ class ListStaff extends ListRecords
                 ->required()
                 ->disk('public')
                 ->directory('files'),
-                Select::make('agency_id')
+                Select::make('category_id')
                 ->label("Category")
                 ->placeholder('Select Category')
-                ->options(Agency::get()->pluck("name", "id")->toArray())
+                ->options(Category::query()->pluck("name", "id"))
                 ->required(),
             ])
             ->action(function ($data) {
@@ -52,7 +53,7 @@ class ListStaff extends ListRecords
                 $url = storage_path('app/public/'.$data['file']);
                 //dd($url);
 
-                $import = new StaffImport($data['agency_id']);
+                $import = new StaffImport($data['category_id']);
                 $import->import($url);
 
                 if ($import->failures()->isNotEmpty()) {
