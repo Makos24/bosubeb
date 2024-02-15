@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Filament\Resources\StaffResource\Pages;
+namespace App\Filament\Resources\AgencyResource\Pages;
 
-use App\Filament\Resources\StaffResource;
+use App\Filament\Resources\AgencyResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
-class EditStaff extends EditRecord
+class EditAgency extends EditRecord
 {
-    protected static string $resource = StaffResource::class;
+    protected static string $resource = AgencyResource::class;
 
     protected function getHeaderActions(): array
     {
@@ -16,6 +16,4 @@ class EditStaff extends EditRecord
             Actions\DeleteAction::make(),
         ];
     }
-
-    
 }

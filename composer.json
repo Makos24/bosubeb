@@ -11,6 +11,7 @@
         "filament/filament": "^3.0-stable",
         "guzzlehttp/guzzle": "^7.0.1",
         "laravel/framework": "^10.0",
+        "laravel/horizon": "^5.22",
         "laravel/jetstream": "^2.6",
         "laravel/passport": "^11.0",
         "laravel/sanctum": "^3.2",
