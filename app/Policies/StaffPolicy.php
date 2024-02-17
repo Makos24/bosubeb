@@ -13,7 +13,12 @@ class StaffPolicy
      */
     // public function viewAny(User $user): bool
     // {
-    //     return $user->role_id === 1;
+    //     if ($user->role_id === 1) {
+    //         return true;
+    //     }
+    
+    //     // Check if categories match or adminUser has assigned users of category
+    //     // return $user->role->agency_id ;
     // }
 
     /**
@@ -21,7 +26,14 @@ class StaffPolicy
      */
     public function view(User $user, Staff $staff): bool
     {
-        return $user->role_id === 1;
+        //return $user->role_id === 1;
+
+        if ($user->role_id === 1) {
+            return true;
+        }
+    
+        // Check if categories match or adminUser has assigned users of category
+        return $staff->category_id === $user->role->agency_id || $staff->category_id === 1;
     }
 
     // /**

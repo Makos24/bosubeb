@@ -6,7 +6,8 @@ use App\Exports\SummaryExport;
 use App\Models\Agency;
 use App\Models\Lga;
 use App\Models\Ministry;
-use App\Models\Qualification;
+use App\Models\agency_id;
+use App\Models\Category;
 use App\Models\Staff;
 use Carbon\Carbon;
 use Livewire\Component;
@@ -17,14 +18,14 @@ class Dashboard extends Component
 {
     use WithPagination;
 
-    public $status, $qualification, $lga;
+    public $category_id, $agency_id, $lga;
 
     public function render()
     {
-        $data = Staff::when($this->status, function($query, $status){
-            return $query->where('status', $status);
-        })->when($this->qualification, function($query, $qualification){
-            return $query->where('qualification', $qualification);
+        $data = Staff::when($this->category_id, function($query, $category_id){
+            return $query->where('category_id', $category_id);
+        })->when($this->agency_id, function($query, $agency_id){
+            return $query->where('agency_id', $agency_id);
         })->when($this->lga, function($query, $lga){
             return $query->where('lga_id', $lga);
         });
@@ -52,16 +53,16 @@ class Dashboard extends Component
             'salary' => $staff_salary,
             'school' => $staff_school,
             'lga_page' => $lga_page,
-            'ministries' => $data->select('cadre')->distinct()->get(),
-            'qualifications' => Qualification::get(),
+            'categories' => Category::get(),
+            'agencies' => Agency::get(),
             'lgas' => Lga::where('state_id', 8)->get()
         ]);
     }
 
     public function clearFilters()
     {
-        $this->qualification = '';
-        $this->status = '';
+        $this->agency_id = '';
+        $this->category_id = '';
         $this->lga = '';
     }
 

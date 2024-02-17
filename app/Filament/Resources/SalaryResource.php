@@ -21,7 +21,7 @@ class SalaryResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-banknotes';
 
-    protected static ?string $navigationGroup = 'Main Menu';
+    protected static ?string $navigationGroup = 'Settings';
 
     public static function form(Form $form): Form
     {

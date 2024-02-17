@@ -7,6 +7,7 @@ use App\Exports\StaffExport;
 use App\Filament\Resources\StaffResource\Pages;
 use App\Filament\Resources\StaffResource\RelationManagers;
 use App\Filament\Resources\StaffResource\RelationManagers\CertificatesRelationManager;
+use App\Filament\Resources\StaffResource\RelationManagers\LoansRelationManager;
 use App\Filament\Resources\StaffResource\RelationManagers\PaymentsRelationManager;
 use App\Filament\Resources\StaffResource\RelationManagers\PromotionsRelationManager;
 use App\Models\Agency;
@@ -41,6 +42,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 
@@ -65,7 +67,7 @@ class StaffResource extends Resource
                             // ...
                             
                             TextInput::make('first_name')
-                            ->required()
+                            
                             ->maxLength(255),
                             TextInput::make('middle_name')
                             ->maxLength(255),
@@ -79,7 +81,7 @@ class StaffResource extends Resource
                                 '1' => 'Male',
                                 '2' => 'Female',
                             ])
-                            ->required(),
+                            ,
                             Select::make('marital_status_id')
                             ->label("Marital Status")
                             ->placeholder('Select')
@@ -90,30 +92,31 @@ class StaffResource extends Resource
                                 '4' => 'Widowed',
                                 '5' => 'Separated',
                             ])
-                            ->required(),
+                            ,
                             DatePicker::make('date_of_birth')
                             ->format('Y-m-d')
-                            ->required(),
+                            ,
                             Select::make('qualification')
                             ->label("Qualification")
                             ->placeholder('Select')
                             ->options(Qualification::all()->pluck("name", "id")->toArray())
-                            ->required(),
+                            ,
                             TextInput::make('phone')
-                            ->required()
+                            
                             ->maxLength(255),
                             TextInput::make('email')
                             ->email()
+                            ->unique()
                             ->maxLength(255),
                             TextInput::make('nin')
-                            ->required()
+                            ->unique()
                             ->maxLength(255),
                             Select::make('state_id')
                             ->label("State of Origin")
                             ->placeholder('Select state')
                             ->options(State::query()->pluck("name", "id"))
                             ->live()
-                            ->required(),
+                            ,
                             Select::make('lga_of_origin_id')
                             ->label("LGA of Origin")
                             ->placeholder('Select LGA')
@@ -152,18 +155,21 @@ class StaffResource extends Resource
                             ->placeholder('Select MDA')
                             ->options(fn (Get $get): Collection => Agency::query()
                             ->where('category_id', $get('category_id'))
-                            ->pluck('name', 'id')),
+                            ->pluck('name', 'id'))
+                            ->searchable(),
                             TextInput::make('form_no')
                             ->label('DP Number')
-                            ->required()
+                            ->disabledOn(['edit'])
+                            ->unique()
                             ->maxLength(255),
                             Select::make('lga_id')
                             ->label("Duty Station")
                             ->placeholder('Select lga')
                             ->options(Lga::query()->where('state_id', 8)->pluck("name", "id"))
-                            ->live(),
+                            ->live()
+                            ->searchable(),
                             // ->afterStateUpdated(fn (callable $set) => $set('school_id', null))
-                            // ->required(),
+                            // ,
                             Select::make('school_id')
                             ->label("School")
                             ->placeholder('Select school')
@@ -180,20 +186,25 @@ class StaffResource extends Resource
                             Select::make('cadre')
                             ->label("Present Rank/Designation")
                             ->placeholder('Select')
-                            ->options(Cadre::query()->pluck("name", "id")),
+                            ->options(Cadre::query()->pluck("name", "id"))
+                            ->searchable(),
                             Select::make('salary_structure_id')
                             ->label("Salary Structure")
                             ->placeholder('Select')
-                            ->options(SalaryStructure::query()->pluck("name", "id")),
+                            ->options(SalaryStructure::query()->pluck("name", "id"))
+                            ->disabledOn(['edit']),
                             TextInput::make('net_salary')
                             ->label('Present Net Salary')
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->disabledOn(['edit']),
                             TextInput::make('salary_grade_level')
                             ->label('Present Grade Level/Step (e.g 7/1)')
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->disabledOn(['edit']),
                             TextInput::make('grade_level')
                             ->label('Highest Promotion/Grade Level/Step at Hand')
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->disabledOn(['edit']),
                             
                         ]),
                     Wizard\Step::make('Educational Background')
@@ -211,7 +222,6 @@ class StaffResource extends Resource
                                 ->label('Qualification Obtained')
                                 ->maxLength(255),
                                 DatePicker::make('from')
-                                ->native(false)
                                 ->format('Y-m-d')
                                 ->label('From (Year)'),
                                 DatePicker::make('to')
@@ -233,11 +243,15 @@ class StaffResource extends Resource
                             ->placeholder('Select')
                             ->options(Bank::query()->pluck("name", "id")),
                             TextInput::make('account_name')
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->disabledOn(['edit']),
                             TextInput::make('account_number')
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->unique()
+                            ->disabledOn(['edit']),
                             TextInput::make('bvn')
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->unique(),
                         ]),
                        
                 
@@ -257,182 +271,6 @@ class StaffResource extends Resource
                             ->label("Relationship with Next of Kin")
                             ->maxLength(255),
                         ]),
-                
-
-
-                
-                // ->columnSpan(3)
-                // ->maxWidth("200px"),
-                // TextInput::make('first_name')
-                // ->required()
-                // ->maxLength(255),
-                // TextInput::make('middle_name')
-                // ->maxLength(255),
-                // TextInput::make('last_name')
-                // ->required()
-                // ->maxLength(255),
-                // Select::make('category_id')
-                // ->label("Category")
-                // ->placeholder('Select Category')
-                // ->options(Category::query()->pluck("name", "id"))
-                // ->live(),
-                // Select::make('agency_id')
-                // ->label("Ministry/Department/Agency")
-                // ->placeholder('Select MDA')
-                // ->options(fn (Get $get): Collection => Agency::query()
-                // ->where('category_id', $get('category_id'))
-                // ->pluck('name', 'id')),
-                // Select::make('lga_id')
-                // ->label("LGA")
-                // ->placeholder('Select lga')
-                // ->options(Lga::query()->where('state_id', 8)->pluck("name", "id"))
-                // ->live(),
-                // // ->afterStateUpdated(fn (callable $set) => $set('school_id', null))
-                // // ->required(),
-                // Select::make('school_id')
-                // ->label("School")
-                // ->placeholder('Select school')
-                // ->options(fn (Get $get): Collection => School::query()
-                // ->where('lga_id', $get('lga_id'))
-                // ->pluck('name', 'id'))
-                // ->live()
-                // ->visible(fn (Get $get): bool => $get('category_id') == 2),
-                // ->required(),
-                // Select::make('duty_station')
-                // ->label("Duty Station")
-                // ->placeholder('Select lga')
-                // ->options(DutyStation::all()->pluck("name", "id")->toArray())
-                // ->required(),
-                // Select::make('minimum_wage')
-                // ->label("Minimum Wage")
-                // ->placeholder('Select')
-                // ->options([
-                //     'Qualified' => 'Qualified',
-                //     'Not Qualified' => 'Not Qualified',
-                // ])
-                // ->required(),
-                // Select::make('gender_id')
-                // ->label("Gender")
-                // ->placeholder('Select')
-                // ->options([
-                //     '1' => 'Male',
-                //     '2' => 'Female',
-                // ])
-                // ->required(),
-                // Select::make('marital_status_id')
-                // ->label("Marital Status")
-                // ->placeholder('Select')
-                // ->options([
-                //     '1' => 'Single',
-                //     '2' => 'Married',
-                //     '3' => 'Divorced',
-                //     '4' => 'Widowed',
-                //     '5' => 'Separated',
-                // ])
-                // ->required(),
-                // DatePicker::make('date_of_birth')
-                // ->format('d/m/Y')
-                // ->required(),
-                // Select::make('qualification')
-                // ->label("Qualification")
-                // ->placeholder('Select')
-                // ->options(Qualification::all()->pluck("name", "id")->toArray())
-                // ->required(),
-                // TextInput::make('phone')
-                // ->required()
-                // ->maxLength(255),
-                // TextInput::make('nin')
-                // ->required()
-                // ->maxLength(255),
-                // Select::make('state_id')
-                // ->label("State of Origin")
-                // ->placeholder('Select state')
-                // ->options(State::query()->pluck("name", "id"))
-                // ->live()
-                // ->required(),
-                // Select::make('lga_of_origin_id')
-                // ->label("LGA of Origin")
-                // ->placeholder('Select LGA')
-                // ->options(fn (Get $get): Collection => Lga::query()
-                // ->where('state_id', $get('state_id'))
-                // ->pluck('name', 'id')),
-                // Select::make('blood_group')
-                // ->label("Blood Group")
-                // ->placeholder('Select')
-                // ->options([
-                //     'A+' => 'A+',
-                //     'A-' => 'A-',
-                //     'B+' => 'B+',
-                //     'B-' => 'B-',
-                //     'AB+' => 'AB+',
-                //     'AB-' => 'AB-',
-                //     'O+' => 'O+',
-                //     'O-' => 'O-',
-                // ]),
-                // DatePicker::make('date_of_appointment')
-                // ->format('d/m/Y')
-                // ,
-                // DatePicker::make('date_of_last_promotion')
-                // ->format('d/m/Y')
-                // ,
-                // DatePicker::make('expected_date_of_retirement')
-                // ->format('d/m/Y')
-                // ,
-                // Toggle::make('status'),
-                // Select::make('cadre')
-                // ->label("Cadre")
-                // ->placeholder('Select')
-                // ->options(Cadre::query()->pluck("name", "id"))
-                // ,
-                // Select::make('salary_id')
-                // ->label("Salary Structure")
-                // ->placeholder('Select')
-                // ->options(SalaryStructure::query()->pluck("name", "id"))
-                // ,
-                // TextInput::make('grade_level')
-                
-                // ->maxLength(255),
-                // TextInput::make('salary_grade_level')
-                
-                // ->maxLength(255),
-                // TextInput::make('gross_salary')
-                
-                // ->maxLength(255),
-                // TextInput::make('net_salary')
-                
-                // ->maxLength(255),
-                // Select::make('bank_id')
-                // ->label("Bank")
-                // ->placeholder('Select')
-                // ->options(Bank::all()->pluck("name", "id")->toArray())
-                // ,
-                // TextInput::make('account_name')
-                
-                // ->maxLength(255),
-                // TextInput::make('account_number')
-                
-                // ->maxLength(255),
-                // TextInput::make('bvn')
-                //             ->maxLength(255),
-                // TextInput::make('bvn')
-                
-                // ->maxLength(255),
-                // Textarea::make('address')
-                
-                // ->maxLength(255),
-                // TextInput::make('email')
-                
-                // ->maxLength(255),
-                // TextInput::make('next_of_kin_name')
-                // ->label("Name of Kin Name")
-                // ->maxLength(255),
-                // TextInput::make('next_of_kin_phone')
-                // ->maxLength(255),
-                // Textarea::make('next_of_kin_address')
-                // ->maxLength(255),
-                // TextInput::make('next_of_kin_relationship')
-                // ->label("Relationship with Next of Kin")
-                // ->maxLength(255),
                 
                 ])->skippable()
                 ])->columns(1);
@@ -567,8 +405,10 @@ class StaffResource extends Resource
     {
         return [
             CertificatesRelationManager::class,
+            PromotionsRelationManager::class,
             PaymentsRelationManager::class,
-            PromotionsRelationManager::class
+            LoansRelationManager::class
+            
         ];
     }
 
@@ -581,4 +421,5 @@ class StaffResource extends Resource
             'view' => Pages\ViewStaff::route('/{record}'),
         ];
     }
+    
 }
