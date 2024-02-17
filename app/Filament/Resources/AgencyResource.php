@@ -14,6 +14,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Auth;
 
 class AgencyResource extends Resource
 {
@@ -21,6 +22,7 @@ class AgencyResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $navigationGroup = 'Main Menu';
+    protected static ?int $navigationSort = 5;
 
 
     public static function form(Form $form): Form
@@ -92,5 +94,13 @@ class AgencyResource extends Resource
             'create' => Pages\CreateAgency::route('/create'),
             'edit' => Pages\EditAgency::route('/{record}/edit'),
         ];
+    }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        if (Auth::user()->role_id === 1) {
+            return true;
+        }
+        return false;
     }
 }

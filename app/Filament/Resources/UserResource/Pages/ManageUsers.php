@@ -16,9 +16,10 @@ class ManageUsers extends ManageRecords
             Actions\CreateAction::make()
             ->mutateFormDataUsing(function (array $data): array {
                 $data['password'] = bcrypt($data['password']);
-         
+                
                 return $data;
             }),
+            
         ];
     }
 

@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use App\Models\Scopes\UserRoleScope;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+
 
 class Staff extends Model
 {
@@ -17,6 +19,11 @@ class Staff extends Model
     protected $casts = [
         'dob', 'dofa', 'dor'
     ];
+
+    protected static function booted(): void
+    {
+        static::addGlobalScope(new UserRoleScope);
+    }
 
     public function salaryTwentySeven(): Attribute
     {

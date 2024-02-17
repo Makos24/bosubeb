@@ -2,8 +2,10 @@
 
 namespace App\Filament\Resources\LoanResource\Pages;
 
+use App\Filament\Imports\LoanImporter;
 use App\Filament\Resources\LoanResource;
 use Filament\Actions;
+use Filament\Actions\ImportAction;
 use Filament\Resources\Pages\ListRecords;
 
 class ListLoans extends ListRecords
@@ -14,6 +16,9 @@ class ListLoans extends ListRecords
     {
         return [
             Actions\CreateAction::make(),
+            ImportAction::make()
+            ->color('primary')
+            ->importer(LoanImporter::class)
         ];
     }
 }
