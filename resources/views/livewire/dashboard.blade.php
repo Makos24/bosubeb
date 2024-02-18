@@ -22,18 +22,20 @@
               </x-filament::input.select>
         </div>
 </div>
-                <div class="min-w-0 flex-1">
+
+    <div class="min-w-0 flex-1">
               <label class="fi-fo-field-wrp-label inline-flex items-center gap-x-3" for="email" class="mx-2" >MDA</label>
               <div class="fi-input-wrp flex rounded-lg shadow-sm ring-1 transition duration-75 bg-white focus-within:ring-2 dark:bg-white/5 ring-gray-950/10 focus-within:ring-primary-600 dark:ring-white/20 dark:focus-within:ring-primary-500 fi-fo-select">      
               <x-filament::input.select wire:model.live="agency_id">
                 <option value="">Select MDA</option>
-                @foreach($agencies as $agency)
+                @foreach($agencies->where('category_id', $category_id) as $agency)
                   <option value="{{$agency->id}}">{{$agency->name}}</option>
                 @endforeach
               </x-filament::input.select>
               </div>
         </div>
 
+@if ($category_id < 4)
 <div class="min-w-0 flex-1">
               <label class="fi-fo-field-wrp-label inline-flex items-center gap-x-3" for="lga" class="mx-2" >LGA</label>
               <div class="fi-input-wrp flex rounded-lg shadow-sm ring-1 transition duration-75 bg-white focus-within:ring-2 dark:bg-white/5 ring-gray-950/10 focus-within:ring-primary-600 dark:ring-white/20 dark:focus-within:ring-primary-500 fi-fo-select">
@@ -45,8 +47,7 @@
               </x-filament::input.select>    
           </div>
           </div>
-
-    
+@endif
               
       </div>    
 <section class="col-[--col-span-default] fi-wi-widget fi-wi-stats-overview">
@@ -65,7 +66,7 @@
               
             </div>
             <span class="icon widget-icon text-green-500">
-            <svg class="fi-wi-stats-overview-stat-description-icon h-8 w-8 text-gray-400 dark:text-gray-500" xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" viewBox="0 0 20 20" fill="currentColor">
+            <svg class="fi-wi-stats-overview-stat-description-icon h-8 w-8 text-gray-400 dark:text-gray-500" xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" viewBox="0 0 20 20" fill="red">
   <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
 </svg>  
             <i class="mdi mdi-finance mdi-48px"></i></span>

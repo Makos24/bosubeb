@@ -78,6 +78,9 @@ class ListStaff extends ListRecords
                 // Array of actions
                 Action::make('export_payment')->label("Payment Schedule")
                 ->form([
+                    DatePicker::make('payment_category')
+                    ->label("Payment Due Date")
+                    ->required(),
                     DatePicker::make('payment_due_date')
                     ->label("Payment Due Date")
                     ->required(),

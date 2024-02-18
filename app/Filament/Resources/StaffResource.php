@@ -36,6 +36,8 @@ use Filament\Tables;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
+use Filament\Tables\Enums\ActionsPosition;
+use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -45,6 +47,8 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
+use Filament\Infolists;
+use Filament\Infolists\Infolist;
 
 
 class StaffResource extends Resource
@@ -365,12 +369,6 @@ class StaffResource extends Resource
                 
             ])
             ->filters([
-                Filter::make('suspended')
-                ->label('Suspended')
-                ->query(fn (Builder $query): Builder => $query->where('suspended', 1)),
-                Filter::make('retired')
-                ->label('Pensioners')
-                ->query(fn (Builder $query): Builder => $query->where('expected_date_of_retirement', '<=', \Carbon\Carbon::today())),
                 SelectFilter::make('category_id')
                 ->label('Category')
                 ->options(Category::query()->pluck("name", "id")),
@@ -384,12 +382,18 @@ class StaffResource extends Resource
                 SelectFilter::make('qualification')
                 ->multiple()
                 ->options(Qualification::query()->pluck("name", "id")),
+                Filter::make('suspended')
+                ->label('Suspended')
+                ->query(fn (Builder $query): Builder => $query->where('suspended', 1)),
+                Filter::make('retired')
+                ->label('Pensioners')
+                ->query(fn (Builder $query): Builder => $query->where('expected_date_of_retirement', '<=', \Carbon\Carbon::today())),
                                 
-            ])
+            ], layout: FiltersLayout::AboveContent)
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\ViewAction::make(),
-            ])
+            ], position: ActionsPosition::BeforeColumns)
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     ExportBulkAction::make(),
@@ -421,5 +425,21 @@ class StaffResource extends Resource
             'view' => Pages\ViewStaff::route('/{record}'),
         ];
     }
+
+//     public static function infolist(Infolist $infolist): Infolist
+// {
+//     return $infolist
+//         ->schema([
+//             Infolists\Components\TextEntry::make('middle_name'),
+//             Infolists\Components\TextEntry::make('middle_name'),
+//             Infolists\Components\TextEntry::make('last_name'),
+//             Infolists\Components\Optio::make('gender_id'),
+//             Infolists\Components\TextEntry::make('email'),
+//             Infolists\Components\TextEntry::make('address')
+//                 ->columnSpanFull(),
+
+                
+//         ]);
+// }
     
 }
