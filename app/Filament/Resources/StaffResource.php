@@ -243,7 +243,8 @@ class StaffResource extends Resource
                             Select::make('bank_id')
                             ->label("Bank Name")
                             ->placeholder('Select')
-                            ->options(Bank::query()->pluck("name", "id")),
+                            ->options(Bank::query()->pluck("name", "id"))
+                            ->disabledOn(['edit']),
                             TextInput::make('account_name')
                             ->maxLength(255)
                             ->disabledOn(['edit']),
