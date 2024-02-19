@@ -77,7 +77,7 @@ class StaffImport implements ToCollection,
                 ]
             )->id;
             // }
-            $staff = Staff::firstOrCreate(
+            $staff = Staff::updateOrCreate(
                 [
                     'form_no' =>  $row['form_no']
                 ],
@@ -113,7 +113,7 @@ class StaffImport implements ToCollection,
                     'net_salary' => to_num($row['present_net_salary']),  
                     'bank_id' => $row['bank_name'],  
                     'account_name' => $row['account_name'],  
-                    'account_number' => $row['account_no'],  
+                    'account_number' => $this->prependZeros($row['account_no']),  
                     'bvn' => $row['bvn_no'],  
                     'address' => $row['your_home_address'],  
                     'email' => $row['email_address'],  
@@ -312,6 +312,10 @@ class StaffImport implements ToCollection,
     {
         // Check if the NIN already exists in the staff table
         return Staff::where('nin', $nin)->exists();
+    }
+
+    protected function prependZeros($number) {
+        return str_pad($number, 10, "0", STR_PAD_LEFT);
     }
     // protected function isDuplicateBVN($nin)
     // {
