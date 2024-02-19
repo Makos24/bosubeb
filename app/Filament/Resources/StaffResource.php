@@ -50,7 +50,6 @@ use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 use Filament\Infolists;
 use Filament\Infolists\Infolist;
 
-
 class StaffResource extends Resource
 {
     protected static ?string $model = Staff::class;
@@ -384,13 +383,16 @@ class StaffResource extends Resource
                 SelectFilter::make('category_id')
                 ->label('Category')
                 ->options(Category::query()->pluck("name", "id")),
-                SelectFilter::make('status')
-                ->label('Status')
-                ->options([1 => "Teacher", 0 => "Non Teacher"]),
+                // SelectFilter::make('status')
+                // ->label('Status')
+                // ->options([1 => "Teacher", 0 => "Non Teacher"]),
                 SelectFilter::make('agency_id')
                 ->label('MDA')
                 ->multiple()
                 ->options(Agency::query()->pluck("name", "id")),
+                SelectFilter::make('lga_id')
+                ->label('LGA')
+                ->options(Lga::query()->pluck("name", "id")),
                 SelectFilter::make('qualification')
                 ->multiple()
                 ->options(Qualification::query()->pluck("name", "id")),
