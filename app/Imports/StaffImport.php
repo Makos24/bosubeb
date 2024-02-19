@@ -40,11 +40,12 @@ class StaffImport implements ToCollection,
 {
     use Importable, SkipsErrors, SkipsFailures;
 
-    protected $category_id;
+    protected $category_id, $agency_id;
 
-    public function  __construct($category_id)
+    public function  __construct($category_id, $agency_id)
     {
         $this->category_id = $category_id;
+        $this->agency_id = $agency_id;
     }
    
     public function collection(Collection $rows)
@@ -55,7 +56,7 @@ class StaffImport implements ToCollection,
             //dd($row);
             $nin = $row['nin_no'];
             // if ($this->isDuplicateNIN($nin) || $row['account_no'] == "0000000000") {
-            if ($row['account_no'] == "0000000000") {
+            if ($this->isDuplicateNIN($nin) || $row['account_no'] == "0000000000") {
                 continue;
             }
             // dd($row);
@@ -82,15 +83,16 @@ class StaffImport implements ToCollection,
                 ],
                 [
                     'category_id' => $this->category_id,
-                    'agency_id' => $row['agency'],
+                    // 'agency_id' => $row['agency'],
+                    'agency_id' => $this->agency_id,
                     'first_name' => $row['first_name'], 
                     'last_name' => $row['surname'], 
                     'middle_name' => $row['other_name'], 
                     'name' => $row['first_name'].' '.$row['other_name'].' '.$row['surname'],
-                    'duty_station' => isset(DutyStation::firstOrCreate(['name' => $row['duty_station_lga'], 'lga_id' => $lga_id])->id) ? : null, 
+                    'duty_station' => DutyStation::firstOrCreate(['name' => $row['duty_station_lga'], 'lga_id' => $lga_id]) ? DutyStation::firstOrCreate(['name' => $row['duty_station_lga'], 'lga_id' => $lga_id])->id : null, 
                     'minimum_wage' => $row['minimum_wage'], 
                     'gender_id' => $row['gender'] == "MALE" ? 1 : 2, 
-                    //'marital_status_id' => $row['marital_status'] == "Single" ? 1 : 2,
+                    'marital_status_id' => $row['marital_status'] == "Single" || $row['marital_status'] == "SINGLE" ? 1 : 2,
                     'date_of_birth' => $this->transformDate($row['date_of_birth']),
                     'qualification' => $row['qualification'],  
                     'phone' => $row['phone_no'],  
