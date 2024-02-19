@@ -34,7 +34,7 @@ class ListStaff extends ListRecords
 
     protected function getHeaderActions(): array
     {
-        set_time_limit(500);
+        set_time_limit(5000);
         
         return [
             Actions\CreateAction::make(),
