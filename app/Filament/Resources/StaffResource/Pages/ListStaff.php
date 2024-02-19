@@ -19,10 +19,12 @@ use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Get;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Support\Enums\ActionSize;
 use Filament\Tables\Actions\BulkAction;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -46,14 +48,23 @@ class ListStaff extends ListRecords
                 ->label("Category")
                 ->placeholder('Select Category')
                 ->options(Category::query()->pluck("name", "id"))
-                ->required(),
+                ->required()
+                ->live(),
+                Select::make('agency_id')
+                ->label("MDA")
+                ->placeholder('Select MDA')
+                ->options(fn (Get $get): Collection => Agency::query()
+                ->where('category_id', $get('category_id'))
+                ->pluck('name', 'id'))
+                ->required()
+                ->visible(fn (Get $get): bool => $get('category_id') < 4 && $get('category_id') != ""),
             ])
             ->action(function ($data) {
                 //dd($data);
                 $url = storage_path('app/public/'.$data['file']);
                 //dd($url);
 
-                $import = new StaffImport($data['category_id']);
+                $import = new StaffImport($data['category_id'], $data['agency_id']);
                 $import->import($url);
 
                 if ($import->failures()->isNotEmpty()) {
@@ -78,8 +89,9 @@ class ListStaff extends ListRecords
                 // Array of actions
                 Action::make('export_payment')->label("Payment Schedule")
                 ->form([
-                    DatePicker::make('payment_category')
-                    ->label("Payment Due Date")
+                    Select::make('category_id')
+                    ->label("Category")
+                    ->options(Category::query()->pluck("name", "id"))
                     ->required(),
                     DatePicker::make('payment_due_date')
                     ->label("Payment Due Date")
@@ -88,14 +100,17 @@ class ListStaff extends ListRecords
                 ->modalWidth("md")
                 ->action(function($data){
                     
-                    $ps = Staff::with("lga", "bank")->whereDoesntHave("payments", function($query) use($data) {
-                        return $query->where('payment_due_date', $data['payment_due_date']);
+                    $ps = Staff::with("lga", "bank")->where('category_id', $data['category_id'])->whereDoesntHave("payments", function($query) use($data) {
+                        return $query->whereYear('payment_due_date', $data['payment_due_date'])
+                                     ->whereMonth('payment_due_date', $data['payment_due_date']);
                     } )->get();
+
+                    //dd($ps);
 
                     $date = Carbon::parse($data['payment_due_date']);
                     foreach($ps as $p){
                         PaymentSchedule::firstOrCreate([
-                            'payment_reference' => $p->lga->lga_code."/".strtoupper($date->format('M'))."/Sal/".$date->format('j/y/n')."/".$p->id
+                            'payment_reference' => $p->category_id != 4 ? $p->lga->lga_code."/".strtoupper($date->format('M'))."/Sal/".$date->format('j/y/n')."/".$p->id : 'SAL'.strtoupper($date->format('MY')).'-'.$p->id
                         ], 
                         [
                             'staff_id' => $p->id,
@@ -106,7 +121,7 @@ class ListStaff extends ListRecords
 
                     $payments =  PaymentSchedule::with(["staff.bank"])->where('payment_due_date', $date->format('Y-m-d'))->get();
                 //dd($payroll);
-                    return Excel::download(new ExportPaymentSchedule("Summary", $payments), Carbon::now().'PaymentSchedule.xlsx');
+                    return Excel::download(new ExportPaymentSchedule("Summary", $payments), Category::find($data['category_id'])->name.Carbon::now().'PaymentSchedule.xlsx');
 
                 }),
                 //Action::make('export_lga')->label("Export by LGA")->action(fn() => (Excel::download(new LGAStaffExport(), 'allstaff.xlsx'))),

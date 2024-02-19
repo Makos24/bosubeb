@@ -69,9 +69,7 @@ class StaffResource extends Resource
                     ->columns(2)
                         ->schema([
                             // ...
-                            
                             TextInput::make('first_name')
-                            
                             ->maxLength(255),
                             TextInput::make('middle_name')
                             ->maxLength(255),
@@ -245,7 +243,8 @@ class StaffResource extends Resource
                             Select::make('bank_id')
                             ->label("Bank Name")
                             ->placeholder('Select')
-                            ->options(Bank::query()->pluck("name", "id")),
+                            ->options(Bank::query()->pluck("name", "id"))
+                            ->disabledOn(['edit']),
                             TextInput::make('account_name')
                             ->maxLength(255)
                             ->disabledOn(['edit']),
@@ -285,47 +284,60 @@ class StaffResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('form_no')
+                ->label('DP Number')
                     ->searchable(),
                 TextColumn::make('name')
                     ->searchable(),
                 TextColumn::make('lga.name')
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('school.name')
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('duty_stations.name')
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('minimum_wage')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('gender.name')
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('marital_status.name')
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('date_of_birth')
                     ->date()
                     ->sortable(),
                 TextColumn::make('qualifications.name')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('phone')
                     ->searchable(),
                 TextColumn::make('nin')
                     ->searchable(),
                 TextColumn::make('lga.name')
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('lga.state.name')
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('blood_group')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('date_of_appointment')
                     ->date()
                     ->sortable(),
                 TextColumn::make('date_of_last_promotion')
                     ->date()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('expected_date_of_retirement')
                     ->date()
                     ->sortable(),
                 ToggleColumn::make('status')
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('cadres.name')
                     ->sortable(),
                 TextColumn::make('grade_level')

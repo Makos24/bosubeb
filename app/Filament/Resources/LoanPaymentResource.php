@@ -89,11 +89,11 @@ class LoanPaymentResource extends Resource
         ];
     }
 
-    public static function shouldRegisterNavigation(): bool
-    {
-        if (Auth::user()->role_id === 1) {
-            return true;
-        }
-        return false;
-    }
+    // public static function shouldRegisterNavigation(): bool
+    // {
+    //     if (Auth::user()->role_id === 1) {
+    //         return true;
+    //     }
+    //     return false;
+    // }
 }
