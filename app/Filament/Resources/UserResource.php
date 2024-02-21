@@ -49,12 +49,13 @@ class UserResource extends Resource
                 ->placeholder('Select MDA')
                 ->options(fn (Get $get): Collection => Agency::query()
                 ->where('category_id', Role::find($get('role_id')) ? Role::find($get('role_id'))->agency_id : '')
-                ->pluck('name', 'id')),
+                ->pluck('name', 'id'))
+                ->visible(fn (Get $get): bool => $get('role_id') == 4),
                 Select::make('lga_id')
                 ->label("LGA")
                 ->placeholder('Select LGA')
                 ->options(Lga::query()->where('state_id', 8)->pluck('name', 'id'))
-                ->visible(fn (Get $get): bool => $get('role_id') == 2),
+                ->visible(fn (Get $get): bool => in_array($get('role_id'), [2, 5, 6])),
                 TextInput::make('password')
                 ->password()
                 ->required()

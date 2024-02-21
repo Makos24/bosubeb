@@ -22,32 +22,39 @@ class Dashboard extends Component
 
     public function render()
     {
-        $data = Staff::when($this->category_id, function($query, $category_id){
-            return $query->where('category_id', $category_id);
-        })->when($this->agency_id, function($query, $agency_id){
-            return $query->where('agency_id', $agency_id);
-        })->when($this->lga, function($query, $lga){
-            return $query->where('lga_id', $lga);
-        });
+        $data = Staff::query()
+    ->when($this->category_id, function ($query, $category_id) {
+        return $query->where('category_id', $category_id);
+    })
+    ->when($this->agency_id, function ($query, $agency_id) {
+        return $query->where('agency_id', $agency_id);
+    })
+    ->when($this->lga, function ($query, $lga) {
+        return $query->where('lga_id', $lga);
+    });
+
 
         $staff_all = clone $data;
-        $staff_retired = clone $data;
+        
+        $students = clone $data;
         $staff_lga = clone $data;
-        $staff_q = clone $data;
-        $staff_t = clone $data;
+        $late = clone $data;
+        $senior = clone $data;
+        $pensions = clone $data;
         $staff_nq = clone $data;
         $staff_salary = clone $data;
         $staff_school = clone $data;
         $lga_page = Lga::where('state_id', 8)->paginate();
 
-       
+    //    dd($pensions->pensioners()->get());
 
         return view('livewire.dashboard', [
-            'staff' => $data,
-            'all' => $staff_all,
-            'retired' => $staff_retired,
-            'q' => $staff_q,
-            't' => $staff_t,
+            'staff' => $staff_all->notStudent()->notDead()->notSenior()->notPensioners(),
+            'all' => $staff_lga,
+            'students' => $students->student(),
+            'late' => $late->dead(),
+            'pensions' => $pensions->pensioners(),
+            'senior' => $senior->senior(),
             'nq' => $staff_nq,
             'lg' => $staff_lga->get()->groupBy('lga_id'),
             'salary' => $staff_salary,
