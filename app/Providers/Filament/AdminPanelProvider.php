@@ -36,7 +36,7 @@ class AdminPanelProvider extends PanelProvider
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
-                //Pages\Dashboard::class,
+                // Pages\ListActivities::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
@@ -68,9 +68,9 @@ class AdminPanelProvider extends PanelProvider
                 NavigationGroup::make()
                     ->label('Payroll'),
                     NavigationGroup::make()
-    ->label('Settings')
-    //->icon('heroicon-o-cog-6-tooth')
-    ->collapsible(true),
+            ->label('Settings')
+            //->icon('heroicon-o-cog-6-tooth')
+            ->collapsible(true),
                     // ->icon('heroicon-o-pencil'),
             ]);
     }

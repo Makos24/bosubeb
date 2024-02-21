@@ -21,6 +21,7 @@ use App\Models\SalaryStructure;
 use App\Models\School;
 use App\Models\Staff;
 use App\Models\State;
+use Filament\Actions\Action;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Repeater;
@@ -69,12 +70,14 @@ class StaffResource extends Resource
                         ->schema([
                             // ...
                             TextInput::make('first_name')
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->disabledOn(['edit']),
                             TextInput::make('middle_name')
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->disabledOn(['edit']),
                             TextInput::make('last_name')
-                            ->required()
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->disabledOn(['edit']),
                             Select::make('gender_id')
                             ->label("Gender")
                             ->placeholder('Select')
@@ -107,10 +110,10 @@ class StaffResource extends Resource
                             ->maxLength(255),
                             TextInput::make('email')
                             ->email()
-                            ->unique()
+                            ->unique(ignoreRecord: true)
                             ->maxLength(255),
                             TextInput::make('nin')
-                            ->unique()
+                            ->unique(ignoreRecord: true)
                             ->maxLength(255),
                             Select::make('state_id')
                             ->label("State of Origin")
@@ -161,7 +164,7 @@ class StaffResource extends Resource
                             TextInput::make('form_no')
                             ->label('DP Number')
                             ->disabledOn(['edit'])
-                            ->unique()
+                            ->unique(ignoreRecord: true)
                             ->maxLength(255),
                             Select::make('lga_id')
                             ->label("Duty Station")
@@ -249,11 +252,12 @@ class StaffResource extends Resource
                             ->disabledOn(['edit']),
                             TextInput::make('account_number')
                             ->maxLength(255)
-                            ->unique()
+                            ->unique(ignoreRecord: true)
                             ->disabledOn(['edit']),
                             TextInput::make('bvn')
                             ->maxLength(255)
-                            ->unique(),
+                            ->unique(ignoreRecord: true)
+                            ->disabledOn(['edit']),
                         ]),
                        
                 
@@ -322,7 +326,6 @@ class StaffResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('blood_group')
-                    ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('date_of_appointment')
                     ->date()
@@ -340,10 +343,8 @@ class StaffResource extends Resource
                 TextColumn::make('cadres.name')
                     ->sortable(),
                 TextColumn::make('grade_level')
-                    ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('salary_grade_level')
-                    ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('gross_salary')
                     ->sortable()
@@ -355,7 +356,6 @@ class StaffResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('account_name')
-                    ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('account_number')
                     ->searchable()
@@ -372,27 +372,28 @@ class StaffResource extends Resource
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('next_of_kin_address')
-                    ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('next_of_kin_relationship')
-                    ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 
             ])
             ->filters([
                 SelectFilter::make('category_id')
                 ->label('Category')
-                ->options(Category::query()->pluck("name", "id")),
+                ->options(Category::query()->pluck("name", "id"))
+                ->hidden(auth()->user()->role_id != 1),
                 // SelectFilter::make('status')
                 // ->label('Status')
                 // ->options([1 => "Teacher", 0 => "Non Teacher"]),
                 SelectFilter::make('agency_id')
                 ->label('MDA')
                 ->multiple()
-                ->options(Agency::query()->pluck("name", "id")),
+                ->options(Agency::query()->pluck("name", "id"))
+                ->hidden(in_array(auth()->user()->role_id, [2, 4, 5, 6])),
                 SelectFilter::make('lga_id')
                 ->label('LGA')
-                ->options(Lga::query()->pluck("name", "id")),
+                ->options(Lga::query()->pluck("name", "id"))
+                ->hidden(in_array(auth()->user()->role_id, [3, 4])),
                 SelectFilter::make('qualification')
                 ->multiple()
                 ->options(Qualification::query()->pluck("name", "id")),
@@ -402,7 +403,15 @@ class StaffResource extends Resource
                 Filter::make('retired')
                 ->label('Pensioners')
                 ->query(fn (Builder $query): Builder => $query->where('expected_date_of_retirement', '<=', \Carbon\Carbon::today())),
-                                
+                Filter::make('deceased')
+                ->label('Late Case')
+                ->query(fn (Builder $query): Builder => $query->where('deceased', 1)),
+                Filter::make('student')
+                ->label('Students')
+                ->query(fn (Builder $query): Builder => $query->where('student', 1)),
+                Filter::make('senior_citizen')
+                ->label('Senior Citizens')
+                ->query(fn (Builder $query): Builder => $query->where('senior_citizen', 1)),               
             ], layout: FiltersLayout::AboveContent)
             ->actions([
                 Tables\Actions\EditAction::make(),

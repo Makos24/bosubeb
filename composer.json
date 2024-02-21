@@ -19,9 +19,11 @@
         "livewire/livewire": "^3.0",
         "maatwebsite/excel": "^3.1",
         "nativephp/electron": "^0.4.0",
+        "noxoua/filament-activity-log": "^2.2",
         "opcodesio/log-viewer": "^3.1",
         "pxlrbt/filament-excel": "^2.3",
         "rappasoft/laravel-livewire-tables": "^3.1.2",
+        "spatie/laravel-activitylog": "^4.7",
         "symfony/mailer": "^6.2"
     },
     "require-dev": {
