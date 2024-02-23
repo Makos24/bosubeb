@@ -24,6 +24,7 @@
 </div>
 @endif
 @if (!in_array(auth()->user()->role_id, [2, 4, 5, 6]))
+@if ($category_id != "" && $category_id == 4)
     <div class="min-w-0 flex-1">
               <label class="fi-fo-field-wrp-label inline-flex items-center gap-x-3" for="email" class="mx-2" >MDA</label>
               <div class="fi-input-wrp flex rounded-lg shadow-sm ring-1 transition duration-75 bg-white focus-within:ring-2 dark:bg-white/5 ring-gray-950/10 focus-within:ring-primary-600 dark:ring-white/20 dark:focus-within:ring-primary-500 fi-fo-select">      
@@ -36,8 +37,10 @@
               </div>
         </div>
 @endif
+@endif
 
 @if (!in_array(auth()->user()->role_id, [3, 4]))
+@if ($category_id != "" && $category_id < 4)
 <div class="min-w-0 flex-1">
               <label class="fi-fo-field-wrp-label inline-flex items-center gap-x-3" for="lga" class="mx-2" >LGA</label>
               <div class="fi-input-wrp flex rounded-lg shadow-sm ring-1 transition duration-75 bg-white focus-within:ring-2 dark:bg-white/5 ring-gray-950/10 focus-within:ring-primary-600 dark:ring-white/20 dark:focus-within:ring-primary-500 fi-fo-select">
@@ -49,6 +52,7 @@
               </x-filament::input.select>    
           </div>
           </div>
+@endif          
 @endif
               
       </div>    
@@ -141,7 +145,8 @@
     </div>
 
     <!-- Students and late cases begin -->
-
+  @if ($category_id == "" || $category_id == 4)
+    
     <div class="fi-wi-stats-overview-stats-ctn grid gap-6 md:grid-cols-2 xl:grid-cols-4" style="margin-bottom: 10px;">
       
 
@@ -234,12 +239,15 @@
 
     </div>
 
+    @endif
     <!-- qualified end -->
 
      <!-- Deductions begin -->
 
      <div class="fi-wi-stats-overview-stats-ctn grid gap-6 md:grid-cols-2 xl:grid-cols-4" style="margin-bottom: 10px;">
-      <div class="fi-wi-stats-overview-stat relative rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
+      
+  @if($category_id == "" || $category_id == 4)
+     <div class="fi-wi-stats-overview-stat relative rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
         <div class="card-content">
           <div class="flex items-center">
             <div class="widget-label">
@@ -279,7 +287,7 @@
           </div>
         </div>
       </div>
-
+@endif
       <div class="fi-wi-stats-overview-stat relative rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
         <div class="card-content">
           <div class="flex items-center">
@@ -322,12 +330,59 @@
           </div>
         </div>
       </div>
+
+      @if ($category_id != "" && $category_id < 4)
+      <div class="fi-wi-stats-overview-stat relative rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
+        <div class="card-content">
+          <div class="flex items-center">
+            <div class="widget-label">
+              <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">
+                Total Number of Variations
+              </h3>
+              <h1 class="text-2xl font-semibold tracking-tight text-gray-950 dark:text-white">
+                {{0}}
+              </h1>
+              
+            </div>
+            <span class="icon widget-icon text-gray-500">
+            <svg class="fi-wi-stats-overview-stat-description-icon h-10 w-10 text-gray-400 dark:text-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="skyblue" class="w-6 h-6">
+  <path fill-rule="evenodd" d="M3 6a3 3 0 0 1 3-3h12a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V6Zm4.5 7.5a.75.75 0 0 1 .75.75v2.25a.75.75 0 0 1-1.5 0v-2.25a.75.75 0 0 1 .75-.75Zm3.75-1.5a.75.75 0 0 0-1.5 0v4.5a.75.75 0 0 0 1.5 0V12Zm2.25-3a.75.75 0 0 1 .75.75v6.75a.75.75 0 0 1-1.5 0V9.75A.75.75 0 0 1 13.5 9Zm3.75-1.5a.75.75 0 0 0-1.5 0v9a.75.75 0 0 0 1.5 0v-9Z" clip-rule="evenodd" />
+</svg>
+
+            <i class="mdi mdi-cart-outline mdi-48px"></i></span>
+          </div>
+        </div>
+      </div>
+      <div class="fi-wi-stats-overview-stat relative rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
+        <div class="card-content">
+          <div class="flex items-center">
+            <div class="widget-label">
+              <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">
+            Total Variations' Amount
+              </h3>
+              <h1 class="text-2xl font-semibold tracking-tight text-gray-950 dark:text-white">
+              <span>&#8358;</span>{{number_format(0)}}
+              </h1>
+            </div>
+
+            <span class="icon widget-icon text-gray-500">
+            <svg class="fi-wi-stats-overview-stat-description-icon h-8 w-8 text-gray-400 dark:text-gray-500" xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" viewBox="0 0 20 20" fill="currentColor">
+  <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
+</svg>  
+            <i class="mdi mdi-finance mdi-48px"></i></span>
+
+            
+          </div>
+        </div>
+      </div>
+      @endif
+
     </div>
 
     <!-- Deductions end -->
 
-     <!-- Pensioneers begin -->
-
+     <!-- Variations begin -->
+     @if($category_id == "" || $category_id == 4)
      <div class="fi-wi-stats-overview-stats-ctn grid gap-6 md:grid-cols-2 xl:grid-cols-4" style="margin-bottom: 10px;">
      <div class="fi-wi-stats-overview-stat relative rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
         <div class="card-content">
@@ -375,7 +430,7 @@
 
       
     </div>
-
+  @endif
     <!-- Pensioneers end -->
 
       <!-- Pensioneers begin -->

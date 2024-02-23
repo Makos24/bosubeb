@@ -10,6 +10,8 @@ use Filament\Resources\Pages\ViewRecord;
 use App\Models\Staff;
 use App\Models\Suspension;
 use Carbon\Carbon;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 
 class ViewStaff extends ViewRecord
@@ -21,7 +23,7 @@ class ViewStaff extends ViewRecord
         
         
         return [
-            $this->record->suspended == 0 ? Action::make('Suspend Staff')
+            $this->record->suspended == 0 ? Action::make('Suspend')
             ->color('danger')
             ->form([
                 Textarea::make('reason')
@@ -34,7 +36,7 @@ class ViewStaff extends ViewRecord
                     'suspension_reason' => $data['reason']
                 ]);
             } )
-            ->requiresConfirmation() : Action::make('Restore Staff')
+            ->requiresConfirmation() : Action::make('Restore')
             ->color('success')
             ->form([
                 Textarea::make('reason')
@@ -48,11 +50,47 @@ class ViewStaff extends ViewRecord
                 ]);
             })
             ->requiresConfirmation(),
-            Action::make('Retire Staff')
+            Action::make('Retire')
             ->color('warning')
             ->action(fn (Staff $record) => $record->update(['expected_date_of_retirement' => Carbon::today()->toDateString()]))
             ->requiresConfirmation(),
-            
+            Action::make('Resign')
+            ->color('info')
+            ->action(fn (Staff $record) => $record->update(['expected_date_of_retirement' => Carbon::today()->toDateString()]))
+            ->requiresConfirmation(),
+            Action::make('Deceased')
+            ->color('gray')
+            ->form([
+                DatePicker::make('died_on')
+                ->label('Date of Death')
+                ->format('Y-m-d')
+                ->required()
+            ])
+            ->action(fn (Staff $record, $data) => $record->update(['deceased' => true, 'died_on' => $data['died_on']]))
+            ->requiresConfirmation(),
+            Action::make('Complain')
+            ->color('primary')
+            ->form([
+                Select::make('type')
+                ->label('Type of Issue')
+                ->options([
+                    'Salary not Paid' => 'Salary not Paid',
+                    'Other Issue' => 'Other Issue'
+                ])
+                ->required(),
+                DatePicker::make('issue_date')
+                ->format('Y-m-d')
+                ->label('When did Issue start')
+                ->required(),
+                Textarea::make('description')
+                ->label('Describe Issue')
+            ])
+            ->action(fn (Staff $record, $data) => $record->update([
+                                                    'issue_date' => $data['issue_date'], 
+                                                    'type' => $data['type'], 
+                                                    'description' => $data['description'], 
+                                                    ]))
+            ->requiresConfirmation(),
             
         ];
     }

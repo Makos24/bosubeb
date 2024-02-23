@@ -257,7 +257,7 @@ class StaffResource extends Resource
                             TextInput::make('bvn')
                             ->maxLength(255)
                             ->unique(ignoreRecord: true)
-                            ->disabledOn(['edit']),
+                            // ->disabledOn(['edit']),
                         ]),
                        
                 
