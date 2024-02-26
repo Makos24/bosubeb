@@ -7,5 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Complaint extends Model
 {
+    protected $guarded = ['id'];
     use HasFactory;
+
+    public function staff()
+    {
+        return $this->belongsTo(Staff::class);
+    }
 }
