@@ -55,6 +55,7 @@ class UserResource extends Resource
                 ->label("LGA")
                 ->placeholder('Select LGA')
                 ->options(Lga::query()->where('state_id', 8)->pluck('name', 'id'))
+                ->required()
                 ->visible(fn (Get $get): bool => in_array($get('role_id'), [2, 5, 6])),
                 TextInput::make('password')
                 ->password()
