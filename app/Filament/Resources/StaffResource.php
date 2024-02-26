@@ -71,13 +71,14 @@ class StaffResource extends Resource
                             // ...
                             TextInput::make('first_name')
                             ->maxLength(255)
-                            ->disabledOn(['edit']),
+                            ->disabled(fn (Get $get): bool => $get('first_name') != ""),
+                            // ->disabledOn(['edit']),
                             TextInput::make('middle_name')
                             ->maxLength(255)
-                            ->disabledOn(['edit']),
+                            ->disabled(fn (Get $get): bool => $get('middle_name') != ""),
                             TextInput::make('last_name')
                             ->maxLength(255)
-                            ->disabledOn(['edit']),
+                            ->disabled(fn (Get $get): bool => $get('last_name') != ""),
                             Select::make('gender_id')
                             ->label("Gender")
                             ->placeholder('Select')
@@ -96,25 +97,26 @@ class StaffResource extends Resource
                                 '4' => 'Widowed',
                                 '5' => 'Separated',
                             ])
-                            ,
+                            ->disabled(fn (Get $get): bool => $get('marital_status_id') != ""),
                             DatePicker::make('date_of_birth')
                             ->format('Y-m-d')
-                            ,
+                            ->disabled(fn (Get $get): bool => $get('date_of_birth') != ""),
                             Select::make('qualification')
                             ->label("Qualification")
                             ->placeholder('Select')
                             ->options(Qualification::all()->pluck("name", "id")->toArray())
                             ,
                             TextInput::make('phone')
-                            
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->disabled(fn (Get $get): bool => $get('phone') != ""),
                             TextInput::make('email')
                             ->email()
                             ->unique(ignoreRecord: true)
                             ->maxLength(255),
                             TextInput::make('nin')
                             ->unique(ignoreRecord: true)
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->disabled(fn (Get $get): bool => $get('nin') != ""),
                             Select::make('state_id')
                             ->label("State of Origin")
                             ->placeholder('Select state')
@@ -184,19 +186,22 @@ class StaffResource extends Resource
                             ->visible(fn (Get $get): bool => $get('category_id') == 2),
                             DatePicker::make('date_of_appointment')
                             ->format('Y-m-d')
-                            ->label('Date of First Appointment'),
+                            ->label('Date of First Appointment')
+                            ->disabled(fn (Get $get): bool => $get('date_of_appointment') != ""),
                             DatePicker::make('date_of_last_promotion')
-                            ->format('Y-m-d'),
+                            ->format('Y-m-d')
+                            ->disabled(fn (Get $get): bool => $get('date_of_last_promotion') != ""),
                             Select::make('cadre')
                             ->label("Present Rank/Designation")
                             ->placeholder('Select')
                             ->options(Cadre::query()->pluck("name", "id"))
-                            ->searchable(),
+                            ->searchable()
+                            ->disabled(fn (Get $get): bool => $get('cadre') != ""),
                             Select::make('salary_structure_id')
                             ->label("Salary Structure")
                             ->placeholder('Select')
                             ->options(SalaryStructure::query()->pluck("name", "id"))
-                            ->disabledOn(['edit']),
+                            ->disabled(fn (Get $get): bool => $get('salary_structure_id') != ""),
                             TextInput::make('net_salary')
                             ->label('Present Net Salary')
                             ->maxLength(255)
@@ -249,7 +254,7 @@ class StaffResource extends Resource
                             ->disabledOn(['edit']),
                             TextInput::make('account_name')
                             ->maxLength(255)
-                            ->disabledOn(['edit']),
+                            ->disabled(fn (Get $get): bool => $get('account_name') != ""),
                             TextInput::make('account_number')
                             ->maxLength(255)
                             ->unique(ignoreRecord: true)
@@ -257,7 +262,7 @@ class StaffResource extends Resource
                             TextInput::make('bvn')
                             ->maxLength(255)
                             ->unique(ignoreRecord: true)
-                            // ->disabledOn(['edit']),
+                            ->disabled(fn (Get $get): bool => $get('bvn') != ""),
                         ]),
                        
                 
@@ -267,15 +272,19 @@ class StaffResource extends Resource
                             // ...
                             TextInput::make('next_of_kin_name')
                             ->label("Next of Kin Name")
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->disabled(fn (Get $get): bool => $get('next_of_kin_name') != ""),
                             TextInput::make('next_of_kin_phone')
                             ->label("Next of Kin Phone Number")
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->disabled(fn (Get $get): bool => $get('next_of_kin_phone') != ""),
                             Textarea::make('next_of_kin_address')
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->disabled(fn (Get $get): bool => $get('next_of_kin_address') != ""),
                             TextInput::make('next_of_kin_relationship')
                             ->label("Relationship with Next of Kin")
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->disabled(fn (Get $get): bool => $get('next_of_kin_relationship') != ""),
                         ]),
                 
                 ])->skippable()
@@ -392,7 +401,7 @@ class StaffResource extends Resource
                 ->hidden(in_array(auth()->user()->role_id, [2, 4, 5, 6])),
                 SelectFilter::make('lga_id')
                 ->label('LGA')
-                ->options(Lga::query()->pluck("name", "id"))
+                ->options(Lga::query()->where('state_id', 8)->pluck("name", "id"))
                 ->hidden(in_array(auth()->user()->role_id, [3, 4])),
                 SelectFilter::make('qualification')
                 ->multiple()

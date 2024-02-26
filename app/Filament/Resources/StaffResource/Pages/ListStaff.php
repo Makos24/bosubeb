@@ -10,6 +10,7 @@ use App\Filament\Resources\StaffResource;
 use App\Imports\StaffImport;
 use App\Models\Agency;
 use App\Models\Category;
+use App\Models\Lga;
 use App\Models\PaymentSchedule;
 use App\Models\Staff;
 use Carbon\Carbon;
@@ -39,6 +40,7 @@ class ListStaff extends ListRecords
         return [
             Actions\CreateAction::make(),
             Action::make('Upload Staff Records')
+            ->visible(fn () => auth()->user()->role_id == 1)
             ->form([
                 FileUpload::make('file')
                 ->required()
@@ -92,7 +94,18 @@ class ListStaff extends ListRecords
                     Select::make('category_id')
                     ->label("Category")
                     ->options(Category::query()->pluck("name", "id"))
-                    ->required(),
+                    ->required()
+                    ->live(),
+                    Select::make('lga_id')
+                    ->label('LGA')
+                    ->options(Lga::query()->where('state_id', 8)->pluck("name", "id"))
+                    ->visible(fn (Get $get): bool => $get('category_id') != "" && $get('category_id') < 4)
+                    ->multiple(),
+                    Select::make('agency_id')
+                    ->label('MDA')
+                    ->options(Agency::query()->pluck("name", "id"))
+                    ->visible(fn (Get $get): bool => $get('category_id') == 4)
+                    ->multiple(),
                     DatePicker::make('payment_due_date')
                     ->label("Payment Due Date")
                     ->required(),
@@ -100,10 +113,20 @@ class ListStaff extends ListRecords
                 ->modalWidth("md")
                 ->action(function($data){
                     
-                    $ps = Staff::with("lga", "bank")->where('category_id', $data['category_id'])->whereDoesntHave("payments", function($query) use($data) {
-                        return $query->whereYear('payment_due_date', $data['payment_due_date'])
-                                     ->whereMonth('payment_due_date', $data['payment_due_date']);
-                    } )->get();
+                    if($data['category_id'] < 4){
+                        $ps = Staff::with("lga", "bank")->where('category_id', $data['category_id'])->whereIn('lga_id', $data['lga_id'])
+                        ->whereDoesntHave("payments", function($query) use($data) {
+                            return $query->whereYear('payment_due_date', $data['payment_due_date'])
+                                         ->whereMonth('payment_due_date', $data['payment_due_date']);
+                        } )->get();
+                    }else{
+                        $ps = Staff::with("lga", "bank")->where('category_id', $data['category_id'])->whereIn('agency_ic', $data['agency_id'])
+                        ->whereDoesntHave("payments", function($query) use($data) {
+                            return $query->whereYear('payment_due_date', $data['payment_due_date'])
+                                         ->whereMonth('payment_due_date', $data['payment_due_date']);
+                        } )->get();
+                    }
+                    
 
                     //dd($ps);
 
