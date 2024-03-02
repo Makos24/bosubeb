@@ -18,7 +18,7 @@ class SalaryStructureResource extends Resource
 {
     protected static ?string $model = SalaryStructure::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-adjustments-horizontal';
     protected static ?string $navigationGroup = 'Settings';
 
 

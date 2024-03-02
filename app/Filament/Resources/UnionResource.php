@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\CadreResource\Pages;
-use App\Filament\Resources\CadreResource\RelationManagers;
-use App\Models\Cadre;
+use App\Filament\Resources\UnionResource\Pages;
+use App\Filament\Resources\UnionResource\RelationManagers;
+use App\Models\Union;
 use Filament\Forms;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -15,12 +15,11 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class CadreResource extends Resource
+class UnionResource extends Resource
 {
-    protected static ?string $model = Cadre::class;
+    protected static ?string $model = Union::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-ticket';
-
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $navigationGroup = 'Settings';
 
 
@@ -30,6 +29,7 @@ class CadreResource extends Resource
             ->schema([
                 TextInput::make('name')
                 ->required()
+                
             ]);
     }
 
@@ -38,8 +38,6 @@ class CadreResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('name')
-                ->searchable()
-                ->sortable()
             ])
             ->filters([
                 //
@@ -58,7 +56,7 @@ class CadreResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ManageCadres::route('/'),
+            'index' => Pages\ManageUnions::route('/'),
         ];
     }
 }

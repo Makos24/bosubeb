@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\CadreResource\Pages;
-use App\Filament\Resources\CadreResource\RelationManagers;
-use App\Models\Cadre;
+use App\Filament\Resources\QualificationResource\Pages;
+use App\Filament\Resources\QualificationResource\RelationManagers;
+use App\Models\Qualification;
 use Filament\Forms;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -15,12 +15,11 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class CadreResource extends Resource
+class QualificationResource extends Resource
 {
-    protected static ?string $model = Cadre::class;
+    protected static ?string $model = Qualification::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-ticket';
-
+    protected static ?string $navigationIcon = 'heroicon-o-academic-cap';
     protected static ?string $navigationGroup = 'Settings';
 
 
@@ -58,7 +57,7 @@ class CadreResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ManageCadres::route('/'),
+            'index' => Pages\ManageQualifications::route('/'),
         ];
     }
 }
