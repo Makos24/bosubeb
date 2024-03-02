@@ -71,11 +71,16 @@ class StaffImport implements ToCollection,
             //                                                                     ->orWhere('bank_code', $row['bank_name'])
             //                                                                     ->orWhere('sort_code', $row['bank_name'])->first()->id : '';
             // if(strlen($row['school']) > 3){
-            $school_id = School::firstOrCreate([
+            if($this->category_id == 2){
+                $school_id = School::firstOrCreate([
                     'name' => $row['school'],
                     'lga_id' => $lga_id
                 ]
-            )->id;
+                )->id;
+            }else{
+                $school_id = null;
+            }
+                
             // }
             $staff = Staff::updateOrCreate(
                 [
@@ -105,8 +110,8 @@ class StaffImport implements ToCollection,
                     //'salary_id' => 1,  
                     //'salary_structure' => is_numeric($row['salary_structure_based_on']) && $row['salary_structure_based_on'] < 1 ? round((float)$row['salary_structure_based_on']*100).'%' : $row['salary_structure_based_on'],  
                     'salary_structure' => $row['salary_structure_based_on'],  
-                    'salary_grade' => explode("/", $row['grade_level_of_your_salary'])[0],  
-                    'salary_step' => explode("/", $row['grade_level_of_your_salary'])[1],  
+                    'salary_grade' => isset(explode("/", $row['grade_level_of_your_salary'])[0]) ? explode("/", $row['grade_level_of_your_salary'])[0] : null,  
+                    'salary_step' => isset(explode("/", $row['grade_level_of_your_salary'])[1]) ? explode("/", $row['grade_level_of_your_salary'])[1] : null,  
                     'grade_level' => $row['present_grade_levelhighest_promotion'],  
                     'salary_grade_level' => $row['grade_level_of_your_salary'],  
                     'gross_salary' => to_num($row['present_gross_salary']),  
@@ -122,7 +127,7 @@ class StaffImport implements ToCollection,
                     'next_of_kin_address' => $row['next_of_kin_address'], 
                     'next_of_kin_relationship' => $row['relationship_with_next_of_kin'], 
                     'lga_id' => $lga_id, 
-                    'school_id' => $school_id,
+                    'school_id' => $school_id ? $school_id : '',
                     // 'date_of_appointment' => $row['date_of_1st_appointment'], 
                     // 'date_of_last_promotion' => $row['date_of_last_promotion'], 
                     // 'expected_date_of_retirement' => $row['expected_date_of_retirement'], 

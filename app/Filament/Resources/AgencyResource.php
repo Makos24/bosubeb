@@ -20,8 +20,10 @@ class AgencyResource extends Resource
 {
     protected static ?string $model = Agency::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $navigationGroup = 'Main Menu';
+    protected static ?string $navigationIcon = 'heroicon-o-building-office-2';
+    protected static ?string $navigationGroup = 'Settings';
+    protected static ?string $title = 'MDAs';
+    protected static ?string $navigationLabel = 'MDAs';
     protected static ?int $navigationSort = 5;
 
 

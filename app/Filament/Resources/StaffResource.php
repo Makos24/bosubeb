@@ -21,6 +21,7 @@ use App\Models\SalaryStructure;
 use App\Models\School;
 use App\Models\Staff;
 use App\Models\State;
+use App\Models\Union;
 use Filament\Actions\Action;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
@@ -86,6 +87,7 @@ class StaffResource extends Resource
                                 '1' => 'Male',
                                 '2' => 'Female',
                             ])
+                            ->disabled(fn (Get $get): bool => $get('gender_id') != "")
                             ,
                             Select::make('marital_status_id')
                             ->label("Marital Status")
@@ -105,14 +107,15 @@ class StaffResource extends Resource
                             ->label("Qualification")
                             ->placeholder('Select')
                             ->options(Qualification::all()->pluck("name", "id")->toArray())
-                            ,
+                            ->disabled(fn (Get $get): bool => $get('qualification') != ""),
                             TextInput::make('phone')
                             ->maxLength(255)
                             ->disabled(fn (Get $get): bool => $get('phone') != ""),
                             TextInput::make('email')
                             ->email()
                             ->unique(ignoreRecord: true)
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->disabled(fn (Get $get): bool => $get('email') != ""),
                             TextInput::make('nin')
                             ->unique(ignoreRecord: true)
                             ->maxLength(255)
@@ -122,16 +125,18 @@ class StaffResource extends Resource
                             ->placeholder('Select state')
                             ->options(State::query()->pluck("name", "id"))
                             ->live()
-                            ,
+                            ->disabled(fn (Get $get): bool => $get('state_id') != ""),
                             Select::make('lga_of_origin_id')
                             ->label("LGA of Origin")
                             ->placeholder('Select LGA')
                             ->options(fn (Get $get): Collection => Lga::query()
                             ->where('state_id', $get('state_id'))
-                            ->pluck('name', 'id')),
+                            ->pluck('name', 'id'))
+                            ->disabled(fn (Get $get): bool => $get('lga_of_origin_id') != ""),
                             Textarea::make('address')
                             ->label('Home Address')
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->disabled(fn (Get $get): bool => $get('address') != ""),
                             Select::make('blood_group')
                             ->label("Blood Group")
                             ->placeholder('Select')
@@ -144,7 +149,8 @@ class StaffResource extends Resource
                                 'AB-' => 'AB-',
                                 'O+' => 'O+',
                                 'O-' => 'O-',
-                            ]),
+                            ])
+                            ->disabled(fn (Get $get): bool => $get('blood_group') != ""),
                             
                         ]),
                     Wizard\Step::make('Employment Details')
@@ -155,25 +161,29 @@ class StaffResource extends Resource
                             ->label("Category")
                             ->placeholder('Select Category')
                             ->options(Category::query()->pluck("name", "id"))
-                            ->live(),
+                            ->live()
+                            ->disabled(fn (Get $get): bool => $get('category_id') != ""),
                             Select::make('agency_id')
                             ->label("Ministry/Department/Agency")
                             ->placeholder('Select MDA')
                             ->options(fn (Get $get): Collection => Agency::query()
                             ->where('category_id', $get('category_id'))
                             ->pluck('name', 'id'))
-                            ->searchable(),
+                            ->live()
+                            //->searchable()
+                            ->disabled(fn (Get $get): bool => $get('agency_id') != ""),
                             TextInput::make('form_no')
                             ->label('DP Number')
                             ->disabledOn(['edit'])
                             ->unique(ignoreRecord: true)
                             ->maxLength(255),
-                            Select::make('lga_id')
+                            Select::make('duty_station')
                             ->label("Duty Station")
-                            ->placeholder('Select lga')
-                            ->options(Lga::query()->where('state_id', 8)->pluck("name", "id"))
+                            ->placeholder('Select')
+                            ->options(DutyStation::query()->pluck("name", "id"))
                             ->live()
-                            ->searchable(),
+                            ->searchable()
+                            ->disabled(fn (Get $get): bool => $get('duty_station') != ""),
                             // ->afterStateUpdated(fn (callable $set) => $set('school_id', null))
                             // ,
                             Select::make('school_id')
@@ -183,7 +193,8 @@ class StaffResource extends Resource
                             ->where('lga_id', $get('lga_id'))
                             ->pluck('name', 'id'))
                             ->live()
-                            ->visible(fn (Get $get): bool => $get('category_id') == 2),
+                            ->visible(fn (Get $get): bool => $get('category_id') == 2)
+                            ->disabled(fn (Get $get): bool => $get('school_id') != ""),
                             DatePicker::make('date_of_appointment')
                             ->format('Y-m-d')
                             ->label('Date of First Appointment')
@@ -205,15 +216,22 @@ class StaffResource extends Resource
                             TextInput::make('net_salary')
                             ->label('Present Net Salary')
                             ->maxLength(255)
-                            ->disabledOn(['edit']),
+                            ->disabled(fn (Get $get): bool => $get('net_salary') != ""),
                             TextInput::make('salary_grade_level')
                             ->label('Present Grade Level/Step (e.g 7/1)')
                             ->maxLength(255)
-                            ->disabledOn(['edit']),
+                            ->disabled(fn (Get $get): bool => $get('salary_grade_level') != ""),
                             TextInput::make('grade_level')
                             ->label('Highest Promotion/Grade Level/Step at Hand')
                             ->maxLength(255)
-                            ->disabledOn(['edit']),
+                            ->disabled(fn (Get $get): bool => $get('grade_level') != ""),
+                            Select::make('union_id')
+                            ->label("Union")
+                            ->placeholder('Select union')
+                            ->options(Union::query()->pluck("name", "id"))
+                            ->live()
+                            ->searchable()
+                            ->disabled(fn (Get $get): bool => $get('union_id') != ""),
                             
                         ]),
                     Wizard\Step::make('Educational Background')
@@ -226,16 +244,20 @@ class StaffResource extends Resource
                             ->schema([
                                 // ...
                                 TextInput::make('school_attended')
-                                ->maxLength(255),
+                                ->maxLength(255)
+                                ->disabled(fn (Get $get): bool => $get('school_attended') != ""),
                                 TextInput::make('certificate')
                                 ->label('Qualification Obtained')
-                                ->maxLength(255),
+                                ->maxLength(255)
+                                ->disabled(fn (Get $get): bool => $get('certificate') != ""),
                                 DatePicker::make('from')
                                 ->format('Y-m-d')
-                                ->label('From (Year)'),
+                                ->label('From (Year)')
+                                ->disabled(fn (Get $get): bool => $get('from') != ""),
                                 DatePicker::make('to')
                                 ->format('Y-m-d')
-                                ->label('To (Year)'),
+                                ->label('To (Year)')
+                                ->disabled(fn (Get $get): bool => $get('to') != ""),
                                
                                 
                                 
