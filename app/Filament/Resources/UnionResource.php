@@ -38,6 +38,7 @@ class UnionResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('name')
+                ->searchable()
             ])
             ->filters([
                 //

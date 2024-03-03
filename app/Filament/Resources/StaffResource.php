@@ -171,7 +171,7 @@ class StaffResource extends Resource
                             ->pluck('name', 'id'))
                             ->live()
                             ->searchable()
-                            ->disabled(fn (Get $get): bool => $get('agency_id') != ""),
+                            ->disabled(fn (Get $get): bool => $get('agency_id') != "" && $get('category_id') < 4),
                             TextInput::make('form_no')
                             ->label('DP Number')
                             ->disabledOn(['edit'])
