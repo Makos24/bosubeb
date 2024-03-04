@@ -25,7 +25,7 @@
             <td>{{ $payment->staff->name }}</td>
             <td>{{ $payment->staff->net_salary }}</td>
             <td>{{ Carbon\Carbon::parse($payment->payment_due_date)->format('d/m/Y') }}</td>
-            <td>{{ $payment->payment_reference }}</td>
+            <td>{{ $payment->staff->form_no }}</td>
             <td>{{ $payment->staff->account_number }}</td>
             <td>{{ $payment->staff->bank->sort_code }}</td>
             <td>{{ "1229317425" }}</td>
