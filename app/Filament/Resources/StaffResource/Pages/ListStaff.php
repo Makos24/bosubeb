@@ -112,6 +112,8 @@ class ListStaff extends ListRecords
                 ])
                 ->modalWidth("md")
                 ->action(function($data){
+
+                    // dd($data);
                     
                     if($data['category_id'] < 4){
                         $ps = Staff::with("lga", "bank")->where('category_id', $data['category_id'])->whereIn('lga_id', $data['lga_id'])
@@ -131,9 +133,10 @@ class ListStaff extends ListRecords
                     //dd($ps);
 
                     $date = Carbon::parse($data['payment_due_date']);
+                    $c = 0;
                     foreach($ps as $p){
-                        PaymentSchedule::firstOrCreate([
-                            'payment_reference' => $p->category_id != 4 ? $p->lga->lga_code."/".strtoupper($date->format('M'))."/Sal/".$date->format('j/y/n')."/".$p->id : 'SAL'.strtoupper($date->format('MY')).'-'.$p->id
+                        PaymentSchedule::updateOrCreate([
+                            'payment_reference' => $p->category_id != 4 ? $p->lga->lga_code."/".strtoupper($date->format('M'))."/Sal/".$date->format('j/y/n')."/".++$c : 'SAL'.strtoupper($date->format('MY')).'-'.++$c
                         ], 
                         [
                             'staff_id' => $p->id,
@@ -142,7 +145,8 @@ class ListStaff extends ListRecords
                         ]);
                     }
 
-                    $payments =  PaymentSchedule::with(["staff.bank"])->where('payment_due_date', $date->format('Y-m-d'))->get();
+                    $payments =  PaymentSchedule::with(["staff.bank"])->whereIn('staff_id', $ps->pluck('id')->toArray())
+                                ->where('payment_due_date', $date->format('Y-m-d'))->get();
                 //dd($payroll);
                     return Excel::download(new ExportPaymentSchedule("Summary", $payments), Category::find($data['category_id'])->name.Carbon::now().'PaymentSchedule.xlsx');
 
