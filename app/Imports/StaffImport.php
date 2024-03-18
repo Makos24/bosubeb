@@ -62,14 +62,16 @@ class StaffImport implements ToCollection,
             // dd($row);
             $lga_id = Lga::where('name', ucwords(strtolower($row['lga'])))->orWhere('id', $row['lga'])->first() ? Lga::where('name', ucwords(strtolower($row['lga'])))->orWhere('id', $row['lga'])->first()->id : null;
             
-            // $bank_id = Bank::where('name', $row['bank_name'])
-            //                 ->orWhere('other_name', $row['bank_name'])
-            //                 ->orWhere('bank_code', $row['bank_name'])
-            //                 ->orWhere('sort_code', $row['bank_name'])->first() ? Bank::where('name', $row['bank_name'])
-            //                                                                     ->orWhere('other_name', $row['bank_name'])
-            //                                                                     ->orWhere('other_name', $row['bank_name'])
-            //                                                                     ->orWhere('bank_code', $row['bank_name'])
-            //                                                                     ->orWhere('sort_code', $row['bank_name'])->first()->id : '';
+            $bank_id = Bank::where('id', $row['bank_name'])
+                            ->orWhere('name', $row['bank_name'])
+                            ->orWhere('other_name', $row['bank_name'])
+                            ->orWhere('bank_code', $row['bank_name'])
+                            ->orWhere('sort_code', $row['bank_name'])->first() ? Bank::where('id', $row['bank_name'])
+                                                                                ->orWhere('name', $row['bank_name'])
+                                                                                ->orWhere('other_name', $row['bank_name'])
+                                                                                ->orWhere('other_name', $row['bank_name'])
+                                                                                ->orWhere('bank_code', $row['bank_name'])
+                                                                                ->orWhere('sort_code', $row['bank_name'])->first()->id : '';
             // if(strlen($row['school']) > 3){
             if($this->category_id == 2){
                 $school_id = School::firstOrCreate([
@@ -89,7 +91,7 @@ class StaffImport implements ToCollection,
                 [
                     'category_id' => $this->category_id,
                     // 'agency_id' => $row['agency'],
-                    'agency_id' => $this->agency_id,
+                    'agency_id' => (in_array($this->category_id, [2,3])) ? $this->agency_id : (($this->category_id == 1) ? $row['department'] : (($this->category_id == 4) ? $row['agency'] : '')),
                     'first_name' => $row['first_name'], 
                     'last_name' => $row['surname'], 
                     'middle_name' => $row['other_name'], 
@@ -116,7 +118,7 @@ class StaffImport implements ToCollection,
                     'salary_grade_level' => $row['grade_level_of_your_salary'],  
                     'gross_salary' => to_num($row['present_gross_salary']),  
                     'net_salary' => to_num($row['present_net_salary']),  
-                    'bank_id' => $row['bank_name'],  
+                    'bank_id' => $bank_id,  
                     'account_name' => $row['account_name'],  
                     'account_number' => $this->prependZeros($row['account_no']),  
                     'bvn' => $row['bvn_no'],  

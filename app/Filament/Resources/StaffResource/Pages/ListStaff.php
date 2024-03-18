@@ -59,7 +59,7 @@ class ListStaff extends ListRecords
                 ->where('category_id', $get('category_id'))
                 ->pluck('name', 'id'))
                 ->required()
-                ->visible(fn (Get $get): bool => $get('category_id') < 4 && $get('category_id') != ""),
+                ->visible(fn (Get $get): bool => in_array($get('category_id'), [2,3]) && $get('category_id') != ""),
             ])
             ->action(function ($data) {
                 //dd($data);

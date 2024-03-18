@@ -53,11 +53,6 @@ class QualificationResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ])
-            ->headerActions([
-                ImportAction::make()
-                    ->importer(QualificationImporter::class)
-                    ->color('primary')
             ]);
     }
 
