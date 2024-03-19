@@ -66,6 +66,8 @@ class ListStaff extends ListRecords
                 $url = storage_path('app/public/'.$data['file']);
                 //dd($url);
 
+                !isset($data['agency_id']) ? $data['agency_id'] = null : $data['agency_id'] = $data['agency_id'];
+
                 $import = new StaffImport($data['category_id'], $data['agency_id']);
                 $import->import($url);
 
