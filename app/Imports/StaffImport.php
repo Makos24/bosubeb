@@ -84,7 +84,7 @@ class StaffImport implements ToCollection,
             }
                 
             // }
-            $staff = Staff::updateOrCreate(
+            $staff = Staff::firstOrCreate(
                 [
                     'form_no' =>  $row['form_no']
                 ],
@@ -129,7 +129,7 @@ class StaffImport implements ToCollection,
                     'next_of_kin_address' => $row['next_of_kin_address'], 
                     'next_of_kin_relationship' => $row['relationship_with_next_of_kin'], 
                     'lga_id' => $lga_id, 
-                    'school_id' => $school_id ? $school_id : '',
+                    'school_id' => $school_id,
                     // 'date_of_appointment' => $row['date_of_1st_appointment'], 
                     // 'date_of_last_promotion' => $row['date_of_last_promotion'], 
                     // 'expected_date_of_retirement' => $row['expected_date_of_retirement'], 
