@@ -15,6 +15,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth;
+use pxlrbt\FilamentExcel\Actions\Tables\ExportAction;
 
 class AgencyResource extends Resource
 {
@@ -31,6 +32,7 @@ class AgencyResource extends Resource
     {
         return $form
             ->schema([
+
                 Forms\Components\TextInput::make('acronymn')
                     ->maxLength(255),
                 Forms\Components\TextInput::make('name')
@@ -51,6 +53,8 @@ class AgencyResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('id')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('acronymn')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('name')
@@ -78,6 +82,7 @@ class AgencyResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    ExportAction::make()
                 ]),
             ]);
     }
