@@ -394,3 +394,5 @@
 [Sat Mar 23 18:47:31.227690 2024] [cgid:error] [pid 172242:tid 139792327112448] [client 80.94.92.60:56202] AH01264: script not found or unable to stat: /var/www/cgi-bin/luci
 [Sun Mar 24 04:24:30.290025 2024] [cgid:error] [pid 306214:tid 139791295301376] [client 18.133.161.106:57860] AH01264: script not found or unable to stat: /var/www/cgi-bin/login.cgi
 [Sun Mar 24 08:54:10.599229 2024] [cgid:error] [pid 305944:tid 139792310327040] [client 80.94.92.60:42624] AH01264: script not found or unable to stat: /var/www/cgi-bin/system_mgr.cgi
+[Sun Mar 24 21:21:10.290493 2024] [cgid:error] [pid 305944:tid 139792209614592] [client 80.94.92.60:60604] AH01264: script not found or unable to stat: /var/www/cgi-bin/luci
+[Sun Mar 24 21:21:10.290781 2024] [cgid:error] [pid 305944:tid 139792209614592] [client 80.94.92.60:60604] AH01264: script not found or unable to stat: /var/www/cgi-bin/luci
