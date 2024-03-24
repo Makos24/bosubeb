@@ -2,22 +2,16 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Imports\QualificationImporter;
 use App\Filament\Resources\QualificationResource\Pages;
 use App\Filament\Resources\QualificationResource\RelationManagers;
 use App\Models\Qualification;
 use Filament\Forms;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
-use Filament\Tables\Actions\ExportBulkAction;
-use Filament\Tables\Actions\ImportAction;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction as TablesExportBulkAction;
 
 class QualificationResource extends Resource
 {
@@ -26,13 +20,13 @@ class QualificationResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-academic-cap';
     protected static ?string $navigationGroup = 'Settings';
 
-
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                TextInput::make('name')
-                ->required()
+                Forms\Components\TextInput::make('name')
+                    ->required()
+                    ->maxLength(255),
             ]);
     }
 
@@ -40,30 +34,45 @@ class QualificationResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('id')->sortable(),
-                TextColumn::make('name')
-                ->searchable()
-                ->sortable()
+                Tables\Columns\TextColumn::make('id')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('name')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('updated_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
-                    TablesExportBulkAction::make()
                 ]),
             ]);
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            //
+        ];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ManageQualifications::route('/'),
+            'index' => Pages\ListQualifications::route('/'),
+            'create' => Pages\CreateQualification::route('/create'),
+            'edit' => Pages\EditQualification::route('/{record}/edit'),
         ];
     }
 }

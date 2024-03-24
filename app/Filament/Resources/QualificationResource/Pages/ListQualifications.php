@@ -6,9 +6,9 @@ use App\Filament\Imports\QualificationImporter;
 use App\Filament\Resources\QualificationResource;
 use Filament\Actions;
 use Filament\Actions\ImportAction;
-use Filament\Resources\Pages\ManageRecords;
+use Filament\Resources\Pages\ListRecords;
 
-class ManageQualifications extends ManageRecords
+class ListQualifications extends ListRecords
 {
     protected static string $resource = QualificationResource::class;
 
@@ -17,9 +17,8 @@ class ManageQualifications extends ManageRecords
         return [
             Actions\CreateAction::make(),
             ImportAction::make()
-                ->importer(QualificationImporter::class)
-                ->color('primary')
-                
+            ->color('primary')
+            ->importer(QualificationImporter::class)
         ];
     }
 }
