@@ -37,6 +37,7 @@ class CalculateRetirementDate extends Command
              $dateOfAppointment = $staff->date_of_appointment;
              $status = $staff->status;
              $categoryId = $staff->category_id;
+             $salary_structure = $staff->salary_structure;
  
              // Skip if both dates are missing
              if (empty($dateOfBirth) && empty($dateOfAppointment)) {

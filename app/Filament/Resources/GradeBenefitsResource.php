@@ -21,8 +21,10 @@ class GradeBenefitsResource extends Resource
 {
     protected static ?string $model = GradeBenefits::class;
 
+    protected static ?int $navigationSort = 3;
+
     protected static ?string $navigationIcon = 'heroicon-o-wallet';
-    protected static ?string $navigationGroup = 'Settings';
+    protected static ?string $navigationGroup = 'Salary Management';
     
 
 

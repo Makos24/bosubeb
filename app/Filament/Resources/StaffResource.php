@@ -72,16 +72,16 @@ class StaffResource extends Resource
                             // ...
                             TextInput::make('first_name')
                             ->maxLength(255)
-                            ->disabled(fn (Get $get): bool => $get('first_name') != "")
+                            ->disabled(fn (Get $get): bool => $get('first_name') != "" && !in_array(auth()->user()->role_id, [1]))
                             ->dehydrated(),
                             // ->disabledOn(['edit']),
                             TextInput::make('middle_name')
                             ->maxLength(255)
-                            ->disabled(fn (Get $get): bool => $get('middle_name') != "")
+                            ->disabled(fn (Get $get): bool => $get('middle_name') != "" && !in_array(auth()->user()->role_id, [1]))
                             ->dehydrated(),
                             TextInput::make('last_name')
                             ->maxLength(255)
-                            ->disabled(fn (Get $get): bool => $get('last_name') != "")
+                            ->disabled(fn (Get $get): bool => $get('last_name') != "" && !in_array(auth()->user()->role_id, [1]))
                             ->dehydrated(),
                             Select::make('gender_id')
                             ->label("Gender")
@@ -90,7 +90,7 @@ class StaffResource extends Resource
                                 '1' => 'Male',
                                 '2' => 'Female',
                             ])
-                            ->disabled(fn (Get $get): bool => $get('gender_id') != "")
+                            ->disabled(fn (Get $get): bool => $get('gender_id') != "" && !in_array(auth()->user()->role_id, [1]))
                             ->dehydrated(),
                             Select::make('marital_status_id')
                             ->label("Marital Status")
@@ -102,39 +102,40 @@ class StaffResource extends Resource
                                 '4' => 'Widowed',
                                 '5' => 'Separated',
                             ])
-                            ->disabled(fn (Get $get): bool => $get('marital_status_id') != "")
+                            ->disabled(fn (Get $get): bool => $get('marital_status_id') != "" && !in_array(auth()->user()->role_id, [1]))
                             ->dehydrated(),
                             DatePicker::make('date_of_birth')
                             ->format('Y-m-d')
-                            ->disabled(fn (Get $get): bool => $get('date_of_birth') != "")
+                            ->disabled(fn (Get $get): bool => $get('date_of_birth') != "" && !in_array(auth()->user()->role_id, [1]))
                             ->dehydrated(),
                             Select::make('qualification')
                             ->label("Qualification")
                             ->placeholder('Select')
                             ->options(Qualification::all()->pluck("name", "id")->toArray())
-                            ->disabled(fn (Get $get): bool => $get('qualification') != "")
+                            ->disabled(fn (Get $get): bool => $get('qualification') != "" && !in_array(auth()->user()->role_id, [1])) 
                             ->dehydrated(),
                             TextInput::make('phone')
+                            ->unique(ignoreRecord: true)
                             ->maxLength(255)
-                            ->disabled(fn (Get $get): bool => $get('phone') != "")
+                            ->disabled(fn (Get $get): bool => $get('phone') != "" && !in_array(auth()->user()->role_id, [1]))
                             ->dehydrated(),
                             TextInput::make('email')
                             ->email()
                             ->unique(ignoreRecord: true)
                             ->maxLength(255)
-                            ->disabled(fn (Get $get): bool => $get('email') != "")
+                            ->disabled(fn (Get $get): bool => $get('email') != "" && !in_array(auth()->user()->role_id, [1]))
                             ->dehydrated(),
                             TextInput::make('nin')
                             ->unique(ignoreRecord: true)
                             ->maxLength(255)
-                            ->disabled(fn (Get $get): bool => $get('nin') != "")
+                            ->disabled(fn (Get $get): bool => $get('nin') != "" && !in_array(auth()->user()->role_id, [1]))
                             ->dehydrated(),
                             Select::make('state_id')
                             ->label("State of Origin")
                             ->placeholder('Select state')
                             ->options(State::query()->pluck("name", "id"))
                             ->live()
-                            ->disabled(fn (Get $get): bool => $get('state_id') != "")
+                            ->disabled(fn (Get $get): bool => $get('state_id') != "" && !in_array(auth()->user()->role_id, [1]))
                             ->dehydrated(),
                             Select::make('lga_of_origin_id')
                             ->label("LGA of Origin")
@@ -142,12 +143,12 @@ class StaffResource extends Resource
                             ->options(fn (Get $get): Collection => Lga::query()
                             ->where('state_id', $get('state_id'))
                             ->pluck('name', 'id'))
-                            ->disabled(fn (Get $get): bool => $get('lga_of_origin_id') != "")
+                            ->disabled(fn (Get $get): bool => $get('lga_of_origin_id') != "" && !in_array(auth()->user()->role_id, [1]))
                             ->dehydrated(),
                             Textarea::make('address')
                             ->label('Home Address')
                             ->maxLength(255)
-                            ->disabled(fn (Get $get): bool => $get('address') != "")
+                            ->disabled(fn (Get $get): bool => $get('address') != "" && !in_array(auth()->user()->role_id, [1]))
                             ->dehydrated(),
                             Select::make('blood_group')
                             ->label("Blood Group")
@@ -162,7 +163,7 @@ class StaffResource extends Resource
                                 'O+' => 'O+',
                                 'O-' => 'O-',
                             ])
-                            ->disabled(fn (Get $get): bool => $get('blood_group') != "")
+                            ->disabled(fn (Get $get): bool => $get('blood_group') != "" && !in_array(auth()->user()->role_id, [1]))
                             ->dehydrated(),
                             
                         ]),
@@ -175,7 +176,7 @@ class StaffResource extends Resource
                             ->placeholder('Select Category')
                             ->options(Category::query()->pluck("name", "id"))
                             ->live()
-                            ->disabled(fn (Get $get): bool => $get('category_id') != "")
+                            ->disabled(fn (Get $get): bool => $get('category_id') != "" && !in_array(auth()->user()->role_id, [1]))
                             ->dehydrated(),
                             Select::make('agency_id')
                             ->label("Ministry/Department/Agency")
@@ -198,7 +199,7 @@ class StaffResource extends Resource
                             ->options(DutyStation::query()->pluck("name", "id"))
                             ->live()
                             ->searchable()
-                            ->disabled(fn (Get $get): bool => $get('duty_station') != "")
+                            ->disabled(fn (Get $get): bool => $get('duty_station') != "" && !in_array(auth()->user()->role_id, [1]))
                             ->dehydrated(),
                             // ->afterStateUpdated(fn (callable $set) => $set('school_id', null))
                             // ,
@@ -210,44 +211,44 @@ class StaffResource extends Resource
                             ->pluck('name', 'id'))
                             ->live()
                             ->visible(fn (Get $get): bool => $get('category_id') == 2)
-                            ->disabled(fn (Get $get): bool => $get('school_id') != "")
+                            ->disabled(fn (Get $get): bool => $get('school_id') != "" && !in_array(auth()->user()->role_id, [1]))
                             ->dehydrated(),
                             DatePicker::make('date_of_appointment')
                             ->format('Y-m-d')
                             ->label('Date of First Appointment')
-                            ->disabled(fn (Get $get): bool => $get('date_of_appointment') != "")
+                            ->disabled(fn (Get $get): bool => $get('date_of_appointment') != "" && !in_array(auth()->user()->role_id, [1]))
                             ->dehydrated(),
                             DatePicker::make('date_of_last_promotion')
                             ->format('Y-m-d')
-                            ->disabled(fn (Get $get): bool => $get('date_of_last_promotion') != "")
+                            ->disabled(fn (Get $get): bool => $get('date_of_last_promotion') != "" && !in_array(auth()->user()->role_id, [1]))
                             ->dehydrated(),
                             Select::make('cadre')
                             ->label("Present Rank/Designation")
                             ->placeholder('Select')
                             ->options(Cadre::query()->pluck("name", "id"))
                             ->searchable()
-                            ->disabled(fn (Get $get): bool => $get('cadre') != "")
+                            ->disabled(fn (Get $get): bool => $get('cadre') != "" && !in_array(auth()->user()->role_id, [1]))
                             ->dehydrated(),
-                            Select::make('salary_structure_id')
+                            Select::make('salary_structure')
                             ->label("Salary Structure")
                             ->placeholder('Select')
                             ->options(SalaryStructure::query()->pluck("name", "id"))
-                            ->disabled(fn (Get $get): bool => $get('salary_structure_id') != "")
+                            ->disabled(fn (Get $get): bool => $get('salary_structure') != "" && !in_array(auth()->user()->role_id, [1]))
                             ->dehydrated(),
                             TextInput::make('net_salary')
                             ->label('Present Net Salary')
                             ->maxLength(255)
-                            ->disabled(fn (Get $get): bool => $get('net_salary') != "")
+                            ->disabled(fn (Get $get): bool => $get('net_salary') != "" && !in_array(auth()->user()->role_id, [1]))
                             ->dehydrated(),
                             TextInput::make('salary_grade_level')
                             ->label('Present Grade Level/Step (e.g 7/1)')
                             ->maxLength(255)
-                            ->disabled(fn (Get $get): bool => $get('salary_grade_level') != "")
+                            ->disabled(fn (Get $get): bool => $get('salary_grade_level') != "" && !in_array(auth()->user()->role_id, [1]))
                             ->dehydrated(),
                             TextInput::make('grade_level')
                             ->label('Highest Promotion/Grade Level/Step at Hand')
                             ->maxLength(255)
-                            ->disabled(fn (Get $get): bool => $get('grade_level') != "")
+                            ->disabled(fn (Get $get): bool => $get('grade_level') != "" && !in_array(auth()->user()->role_id, [1]))
                             ->dehydrated(),
                             Select::make('union_id')
                             ->label("Union")
@@ -255,7 +256,7 @@ class StaffResource extends Resource
                             ->options(Union::query()->pluck("name", "id"))
                             ->live()
                             ->searchable()
-                            ->disabled(fn (Get $get): bool => $get('union_id') != "")
+                            ->disabled(fn (Get $get): bool => $get('union_id') != "" && !in_array(auth()->user()->role_id, [1]))
                             ->dehydrated(),
                             
                         ]),
@@ -270,22 +271,22 @@ class StaffResource extends Resource
                                 // ...
                                 TextInput::make('school_attended')
                                 ->maxLength(255)
-                                ->disabled(fn (Get $get): bool => $get('school_attended') != "")
+                                ->disabled(fn (Get $get): bool => $get('school_attended') != "" && !in_array(auth()->user()->role_id, [1]))
                                 ->dehydrated(),
                                 TextInput::make('certificate')
                                 ->label('Qualification Obtained')
                                 ->maxLength(255)
-                                ->disabled(fn (Get $get): bool => $get('certificate') != "")
+                                ->disabled(fn (Get $get): bool => $get('certificate') != "" && !in_array(auth()->user()->role_id, [1]))
                                 ->dehydrated(),
                                 DatePicker::make('from')
                                 ->format('Y-m-d')
                                 ->label('From (Year)')
-                                ->disabled(fn (Get $get): bool => $get('from') != "")
+                                ->disabled(fn (Get $get): bool => $get('from') != "" && !in_array(auth()->user()->role_id, [1]))
                                 ->dehydrated(),
                                 DatePicker::make('to')
                                 ->format('Y-m-d')
                                 ->label('To (Year)')
-                                ->disabled(fn (Get $get): bool => $get('to') != "")
+                                ->disabled(fn (Get $get): bool => $get('to') != "" && !in_array(auth()->user()->role_id, [1]))
                                 ->dehydrated(),
                                
                                 
@@ -305,7 +306,7 @@ class StaffResource extends Resource
                             ->disabledOn(['edit']),
                             TextInput::make('account_name')
                             ->maxLength(255)
-                            ->disabled(fn (Get $get): bool => $get('account_name') != "")
+                            ->disabled(fn (Get $get): bool => $get('account_name') != "" && !in_array(auth()->user()->role_id, [1]))
                             ->dehydrated(),
                             TextInput::make('account_number')
                             ->maxLength(255)
@@ -314,7 +315,7 @@ class StaffResource extends Resource
                             TextInput::make('bvn')
                             ->maxLength(255)
                             ->unique(ignoreRecord: true)
-                            ->disabled(fn (Get $get): bool => $get('bvn') != "")
+                            ->disabled(fn (Get $get): bool => $get('bvn') != "" && !in_array(auth()->user()->role_id, [1]))
                             ->dehydrated(),
                         ]),
                        
@@ -326,21 +327,26 @@ class StaffResource extends Resource
                             TextInput::make('next_of_kin_name')
                             ->label("Next of Kin Name")
                             ->maxLength(255)
-                            ->disabled(fn (Get $get): bool => $get('next_of_kin_name') != "")
+                            ->disabled(fn (Get $get): bool => $get('next_of_kin_name') != "" && !in_array(auth()->user()->role_id, [1]))
                             ->dehydrated(),
                             TextInput::make('next_of_kin_phone')
                             ->label("Next of Kin Phone Number")
                             ->maxLength(255)
-                            ->disabled(fn (Get $get): bool => $get('next_of_kin_phone') != "")
+                            ->disabled(fn (Get $get): bool => $get('next_of_kin_phone') != "" && !in_array(auth()->user()->role_id, [1]))
+                            ->dehydrated(),
+                            TextInput::make('next_of_kin_nin')
+                            ->label("Next of Kin NIN")
+                            ->maxLength(255)
+                            ->disabled(fn (Get $get): bool => $get('next_of_kin_nin') != "" && !in_array(auth()->user()->role_id, [1]))
                             ->dehydrated(),
                             Textarea::make('next_of_kin_address')
                             ->maxLength(255)
-                            ->disabled(fn (Get $get): bool => $get('next_of_kin_address') != "")
+                            ->disabled(fn (Get $get): bool => $get('next_of_kin_address') != "" && !in_array(auth()->user()->role_id, [1]))
                             ->dehydrated(),
                             TextInput::make('next_of_kin_relationship')
                             ->label("Relationship with Next of Kin")
                             ->maxLength(255)
-                            ->disabled(fn (Get $get): bool => $get('next_of_kin_relationship') != "")
+                            ->disabled(fn (Get $get): bool => $get('next_of_kin_relationship') != "" && !in_array(auth()->user()->role_id, [1]))
                             ->dehydrated(),
                         ]),
                 
