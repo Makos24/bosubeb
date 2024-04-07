@@ -179,14 +179,26 @@ class StaffResource extends Resource
                             ->disabled(fn (Get $get): bool => $get('category_id') != "" && !in_array(auth()->user()->role_id, [1]))
                             ->dehydrated(),
                             Select::make('agency_id')
-                            ->label("Ministry/Department/Agency")
+                            ->label("Ministry/Agency")
                             ->placeholder('Select MDA')
                             ->options(fn (Get $get): Collection => Agency::query()
                             ->where('category_id', $get('category_id'))
                             ->pluck('name', 'id'))
                             ->live()
                             ->searchable()
-                            ->disabled(fn (Get $get): bool => $get('agency_id') != "" && $get('category_id') < 4)
+                            ->visible(fn (Get $get): bool => $get('category_id') == 4)
+                            ->disabled(fn (Get $get): bool => $get('agency_id') != "" && !in_array(auth()->user()->role_id, [1]))
+                            ->dehydrated(),
+                            Select::make('agency_id')
+                            ->label("Department")
+                            ->placeholder('Select MDA')
+                            ->options(fn (Get $get): Collection => Agency::query()
+                            ->where('category_id', $get('category_id'))
+                            ->pluck('name', 'id'))
+                            ->live()
+                            // ->searchable()
+                            ->visible(fn (Get $get): bool => $get('category_id') < 4)
+                            ->disabled(fn (Get $get): bool => $get('agency_id') != "" && !in_array(auth()->user()->role_id, [1]))
                             ->dehydrated(),
                             TextInput::make('form_no')
                             ->label('DP Number')
@@ -229,35 +241,7 @@ class StaffResource extends Resource
                             ->searchable()
                             ->disabled(fn (Get $get): bool => $get('cadre') != "" && !in_array(auth()->user()->role_id, [1]))
                             ->dehydrated(),
-                            Select::make('salary_structure')
-                            ->label("Salary Structure")
-                            ->placeholder('Select')
-                            ->options(SalaryStructure::query()->pluck("name", "id"))
-                            ->disabled(fn (Get $get): bool => $get('salary_structure') != "" && !in_array(auth()->user()->role_id, [1]))
-                            ->dehydrated(),
-                            TextInput::make('net_salary')
-                            ->label('Present Net Salary')
-                            ->maxLength(255)
-                            ->disabled(fn (Get $get): bool => $get('net_salary') != "" && !in_array(auth()->user()->role_id, [1]))
-                            ->dehydrated(),
-                            TextInput::make('salary_grade_level')
-                            ->label('Present Grade Level/Step (e.g 7/1)')
-                            ->maxLength(255)
-                            ->disabled(fn (Get $get): bool => $get('salary_grade_level') != "" && !in_array(auth()->user()->role_id, [1]))
-                            ->dehydrated(),
-                            TextInput::make('grade_level')
-                            ->label('Highest Promotion/Grade Level/Step at Hand')
-                            ->maxLength(255)
-                            ->disabled(fn (Get $get): bool => $get('grade_level') != "" && !in_array(auth()->user()->role_id, [1]))
-                            ->dehydrated(),
-                            Select::make('union_id')
-                            ->label("Union")
-                            ->placeholder('Select union')
-                            ->options(Union::query()->pluck("name", "id"))
-                            ->live()
-                            ->searchable()
-                            ->disabled(fn (Get $get): bool => $get('union_id') != "" && !in_array(auth()->user()->role_id, [1]))
-                            ->dehydrated(),
+                            
                             
                         ]),
                     Wizard\Step::make('Educational Background')
@@ -295,10 +279,39 @@ class StaffResource extends Resource
                         ]),
                        
                 
-                    Wizard\Step::make('Salary Bank Details')
+                    Wizard\Step::make('Salary Management & Bank Details')
                     ->columns(2)
                         ->schema([
                             // ...
+                            Select::make('salary_structure')
+                            ->label("Salary Structure")
+                            ->placeholder('Select')
+                            ->options(SalaryStructure::query()->pluck("name", "id"))
+                            ->disabled(fn (Get $get): bool => $get('salary_structure') != "" && !in_array(auth()->user()->role_id, [1]))
+                            ->dehydrated(),
+                            TextInput::make('net_salary')
+                            ->label('Present Net Salary')
+                            ->maxLength(255)
+                            ->disabled(fn (Get $get): bool => $get('net_salary') != "" && !in_array(auth()->user()->role_id, [1]))
+                            ->dehydrated(),
+                            TextInput::make('salary_grade_level')
+                            ->label('Present Grade Level/Step (e.g 7/1)')
+                            ->maxLength(255)
+                            ->disabled(fn (Get $get): bool => $get('salary_grade_level') != "" && !in_array(auth()->user()->role_id, [1]))
+                            ->dehydrated(),
+                            TextInput::make('grade_level')
+                            ->label('Highest Promotion/Grade Level/Step at Hand')
+                            ->maxLength(255)
+                            ->disabled(fn (Get $get): bool => $get('grade_level') != "" && !in_array(auth()->user()->role_id, [1, 3]))
+                            ->dehydrated(),
+                            Select::make('union_id')
+                            ->label("Union")
+                            ->placeholder('Select union')
+                            ->options(Union::query()->pluck("name", "id"))
+                            ->live()
+                            ->searchable()
+                            ->disabled(fn (Get $get): bool => $get('union_id') != "" && !in_array(auth()->user()->role_id, [1]))
+                            ->dehydrated(),
                             Select::make('bank_id')
                             ->label("Bank Name")
                             ->placeholder('Select')

@@ -24,7 +24,7 @@ class SalaryItemResource extends Resource
     protected static ?string $model = SalaryItem::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-list-bullet';
-    protected static ?string $navigationGroup = 'Settings';
+    protected static ?string $navigationGroup = 'Salary Management';
 
     protected static ?int $navigationSort = 3;
 
