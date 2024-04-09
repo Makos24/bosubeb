@@ -44,8 +44,8 @@ class CertificatesRelationManager extends RelationManager
             ->columns([
                 Tables\Columns\TextColumn::make('certificate'),
                 Tables\Columns\TextColumn::make('school_attended'),
-                Tables\Columns\TextColumn::make('from'),
-                Tables\Columns\TextColumn::make('to'),
+                Tables\Columns\TextColumn::make('from')->date('d/m/Y'),
+                Tables\Columns\TextColumn::make('to')->date('d/m/Y'),
             ])
             ->filters([
                 //

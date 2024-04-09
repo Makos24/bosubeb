@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Filament\Tables\Columns\Layout\Panel;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -63,5 +64,10 @@ class User extends Authenticatable
     public function role()
     {
         return $this->belongsTo(Role::class, 'role_id');
+    }
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return auth()->user()->role_id != null;
     }
 }

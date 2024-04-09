@@ -33,7 +33,7 @@ class PromotionsRelationManager extends RelationManager
             ->recordTitleAttribute('promotion')
             ->columns([
                 Tables\Columns\TextColumn::make('promotion'),
-                Tables\Columns\TextColumn::make('date'),
+                Tables\Columns\TextColumn::make('date')->date('d/m/Y'),
             ])
             ->filters([
                 //
