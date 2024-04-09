@@ -11,4 +11,11 @@ class CreateStaff extends CreateRecord
 {
     use LogCreateRecord;
     protected static string $resource = StaffResource::class;
+
+    protected function mutateFormDataBeforeCreate(array $data): array
+    {
+        $data['name'] = $data['first_name'].' '.$data['middle_name'].' '.$data['last_name'];
+ 
+        return $data;
+    }
 }
