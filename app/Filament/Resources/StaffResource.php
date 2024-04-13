@@ -72,6 +72,7 @@ class StaffResource extends Resource
                             // ...
                             TextInput::make('first_name')
                             ->maxLength(255)
+                            ->required()
                             ->disabled(fn (Get $get): bool => $get('first_name') != "" && !in_array(auth()->user()->role_id, [1]))
                             ->dehydrated(),
                             // ->disabledOn(['edit']),
@@ -81,6 +82,7 @@ class StaffResource extends Resource
                             ->dehydrated(),
                             TextInput::make('last_name')
                             ->maxLength(255)
+                            ->required()
                             ->disabled(fn (Get $get): bool => $get('last_name') != "" && !in_array(auth()->user()->role_id, [1]))
                             ->dehydrated(),
                             Select::make('gender_id')
@@ -202,6 +204,7 @@ class StaffResource extends Resource
                             ->dehydrated(),
                             TextInput::make('form_no')
                             ->label('DP Number')
+                            ->required()
                             ->disabledOn(['edit'])
                             ->unique(ignoreRecord: true)
                             ->maxLength(255),
