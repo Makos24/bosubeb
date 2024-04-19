@@ -29,6 +29,12 @@ class UserRoleScope implements Scope
                 $builder->whereIn('category_id', [1,2,3]);
             }elseif(Auth::user()->role_id == 3){
                 $builder->where('category_id', 4);
+            }elseif(Auth::user()->role_id == 8){
+                $builder->where('category_id', 1);
+            }elseif(Auth::user()->role_id == 9){
+                $builder->where('category_id', 2);
+            }elseif(Auth::user()->role_id == 10){
+                $builder->where('category_id', 3);
             }
         }
         

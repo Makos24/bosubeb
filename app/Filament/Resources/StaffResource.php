@@ -477,7 +477,7 @@ class StaffResource extends Resource
                 ->label('MDA')
                 ->multiple()
                 ->options(Agency::query()->pluck("name", "id"))
-                ->hidden(in_array(auth()->user()->role_id, [2, 4, 5, 6])),
+                ->hidden(in_array(auth()->user()->role_id, [2, 4, 5, 6, 8, 9, 10])),
                 SelectFilter::make('lga_id')
                 ->label('LGA')
                 ->options(Lga::query()->where('state_id', 8)->pluck("name", "id"))
