@@ -72,7 +72,7 @@ class Staff extends Model
 
     public function cadres()
     {
-        return $this->belongsTo(Cadre::class, 'qualification');
+        return $this->belongsTo(Cadre::class, 'cadre');
     }
 
     public function bank()
