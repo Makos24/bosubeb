@@ -23,10 +23,15 @@ class AgencyResource extends Resource
     protected static ?string $model = Agency::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-building-office-2';
-    protected static ?string $navigationGroup = 'Settings';
+    protected static ?string $navigationGroup = 'Configuration';
     protected static ?string $title = 'MDAs';
     protected static ?string $navigationLabel = 'MDAs';
     protected static ?int $navigationSort = 5;
+
+    public static function getNavigationBadge(): ?string
+    {
+        return (string) static::getModel()::count();
+    }
 
 
     public static function form(Form $form): Form

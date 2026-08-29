@@ -16,7 +16,7 @@
               <x-filament::input.select wire:model.live="category_id">
               <option value="">Select category</option>
                 @foreach($categories as $category)
-                  <option value="{{$category->id}}">{{$category->name}}</option>
+                  <option value="{{ data_get($category, 'id') }}">{{ data_get($category, 'name') }}</option>
                 @endforeach
 
               </x-filament::input.select>
@@ -30,8 +30,8 @@
               <div class="fi-input-wrp flex rounded-lg shadow-sm ring-1 transition duration-75 bg-white focus-within:ring-2 dark:bg-white/5 ring-gray-950/10 focus-within:ring-primary-600 dark:ring-white/20 dark:focus-within:ring-primary-500 fi-fo-select">      
               <x-filament::input.select wire:model.live="agency_id">
                 <option value="">Select MDA</option>
-                @foreach($agencies->where('category_id', $category_id) as $agency)
-                  <option value="{{$agency->id}}">{{$agency->name}}</option>
+                @foreach(collect($agencies)->where('category_id', (int) $category_id) as $agency)
+                  <option value="{{ data_get($agency, 'id') }}">{{ data_get($agency, 'name') }}</option>
                 @endforeach
               </x-filament::input.select>
               </div>
@@ -47,7 +47,7 @@
               <x-filament::input.select wire:model.live="lga">
                 <option value="">Select LGA</option>
                 @foreach($lgas as $lga)
-                  <option value="{{$lga->id}}">{{$lga->name}}</option>
+                  <option value="{{ data_get($lga, 'id') }}">{{ data_get($lga, 'name') }}</option>
                 @endforeach
               </x-filament::input.select>    
           </div>

@@ -26,6 +26,11 @@ class LGAResource extends Resource
 
     protected static ?string $navigationGroup = 'Main Menu';
 
+    public static function getNavigationBadge(): ?string
+    {
+        return (string) static::getModel()::where('state_id', config('app.state_id'))->count();
+    }
+
     public static function form(Form $form): Form
     {
         return $form

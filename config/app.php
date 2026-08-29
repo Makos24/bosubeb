@@ -17,6 +17,16 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | State ID
+    |--------------------------------------------------------------------------
+    | The primary state this installation operates for. Used to scope LGA
+    | and payroll queries throughout the application.
+    */
+
+    'state_id' => env('APP_STATE_ID', 8),
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Environment
     |--------------------------------------------------------------------------
     |

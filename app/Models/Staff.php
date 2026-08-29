@@ -20,7 +20,9 @@ class Staff extends Model
     protected $guarded = ['id'];
 
     protected $casts = [
-        'dob', 'dofa', 'dor'
+        'dob' => 'date',
+        'dofa' => 'date',
+        'dor' => 'date',
     ];
 
     
@@ -98,13 +100,11 @@ class Staff extends Model
 
     public function salary_percent()
     {
-        return $this->lga->percent;
+        return $this->lga?->percent;
     }
 
     public function salary_data()
     {
-            //[$grade, $step] = explode("/", $this->salary_grade_level);
-            //return Salary::where('grade', $grade)->where('step', $step)->where('payment_method', $this->lga->percent)->first();
         return $this->belongsTo(Salary::class, ['salary_structure', 'salary_grade', 'salary_step'], ['payment_method', 'grade', 'step']);
      
     }

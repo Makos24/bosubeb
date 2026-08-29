@@ -4,10 +4,8 @@ namespace App\Http\Livewire;
 
 use App\Exports\SummaryExport;
 use App\Models\Agency;
-use App\Models\Lga;
-use App\Models\Ministry;
-use App\Models\agency_id;
 use App\Models\Category;
+use App\Models\Lga;
 use App\Models\Staff;
 use Carbon\Carbon;
 use Livewire\Component;
@@ -22,51 +20,32 @@ class Dashboard extends Component
 
     public function render()
     {
-        $data = Staff::query()
-    ->when($this->category_id, function ($query, $category_id) {
-        return $query->where('category_id', $category_id);
-    })
-    ->when($this->agency_id, function ($query, $agency_id) {
-        return $query->where('agency_id', $agency_id);
-    })
-    ->when($this->lga, function ($query, $lga) {
-        return $query->where('lga_id', $lga);
-    });
+        $base = Staff::query()
+            ->when($this->category_id, fn($q) => $q->where('category_id', $this->category_id))
+            ->when($this->agency_id, fn($q) => $q->where('agency_id', $this->agency_id))
+            ->when($this->lga, fn($q) => $q->where('lga_id', $this->lga));
 
-
-        $staff_all = clone $data;
-        
-        $students = clone $data;
-        $staff_lga = clone $data;
-        $late = clone $data;
-        $senior = clone $data;
-        $pensions = clone $data;
-        $staff_nq = clone $data;
-        $staff_salary = clone $data;
-        $staff_school = clone $data;
-        $lga_page = Lga::where('state_id', 8)->paginate();
-
-    //    dd($pensions->pensioners()->get());
+        $lga_page = Lga::where('state_id', config('app.state_id'))->paginate();
 
         return view('livewire.dashboard', [
-            'staff' => $staff_all->notStudent()->notDead()->notSenior()->notPensioners(),
-            'all' => $staff_lga,
-            'students' => $students->student(),
-            'late' => $late->dead(),
-            'pensions' => $pensions->pensioners(),
-            'senior' => $senior->senior(),
-            'nq' => $staff_nq,
-            'lg' => $staff_lga->get()->groupBy('lga_id'),
-            'salary' => $staff_salary,
-            'school' => $staff_school,
+            'staff'    => (clone $base)->notStudent()->notDead()->notSenior()->notPensioners(),
+            'all'      => clone $base,
+            'students' => (clone $base)->student(),
+            'late'     => (clone $base)->dead(),
+            'pensions' => (clone $base)->pensioners(),
+            'senior'   => (clone $base)->senior(),
+            'nq'       => clone $base,
+            'lg'       => (clone $base)->get()->groupBy('lga_id'),
+            'salary'   => clone $base,
+            'school'   => clone $base,
             'lga_page' => $lga_page,
             'categories' => Category::get(),
             'agencies' => Agency::get(),
-            'lgas' => Lga::where('state_id', 8)->get()
+            'lgas' => Lga::where('state_id', config('app.state_id'))->get(),
         ]);
     }
 
-    public function clearFilters()
+    public function clearFilters(): void
     {
         $this->agency_id = '';
         $this->category_id = '';
@@ -78,9 +57,8 @@ class Dashboard extends Component
         $staff = Staff::query();
         $data = $staff->get()->groupBy('lga_id');
         $lgas = Lga::all();
-        //dd($staff->count());
-        return (Excel::download(new SummaryExport($data, $lgas, $staff), Carbon::today().'Summary.xlsx'));
-    }
 
-    
+        return Excel::download(new SummaryExport($data, $lgas, $staff), Carbon::today().'Summary.xlsx');
+    }
 }
+

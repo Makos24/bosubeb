@@ -60,6 +60,11 @@ class StaffResource extends Resource
 
     protected static ?string $navigationGroup = 'Main Menu';
 
+    public static function getNavigationBadge(): ?string
+    {
+        return (string) static::getModel()::notStudent()->notDead()->notSenior()->notPensioners()->count();
+    }
+
     public static function form(Form $form): Form
     {
         return $form

@@ -20,7 +20,7 @@ class UnionResource extends Resource
     protected static ?string $model = Union::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $navigationGroup = 'Settings';
+    protected static ?string $navigationGroup = 'Configuration';
 
 
     public static function form(Form $form): Form

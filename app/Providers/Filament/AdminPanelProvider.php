@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Auth\Login;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -10,6 +11,7 @@ use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
+use Filament\Support\Enums\MaxWidth;
 use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -27,24 +29,23 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
-            ->login()
+            ->login(Login::class)
             ->passwordReset()
             ->profile()
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => Color::Indigo,
             ])
+            ->maxContentWidth(MaxWidth::Full)
+            ->darkMode(true)
+            ->theme(asset('css/filament/admin/theme.css'))
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
-            ->pages([
-                // Pages\ListActivities::class,
-            ])
+            ->pages([])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
-                // Widgets\AccountWidget::class,
-                // Widgets\FilamentInfoWidget::class,
-            ])->plugins([
-                
+                \App\Filament\Widgets\StatsOverviewWidget::class,
             ])
+            ->plugins([])
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
@@ -62,16 +63,11 @@ class AdminPanelProvider extends PanelProvider
             ->spa()
             ->sidebarCollapsibleOnDesktop()
             ->navigationGroups([
-                NavigationGroup::make()
-                     ->label('Main Menu'),
-                    //  ->icon('heroicon-o-shopping-cart'),
-                NavigationGroup::make()
-                    ->label('Payroll'),
-                    NavigationGroup::make()
-            ->label('Settings')
-            //->icon('heroicon-o-cog-6-tooth')
-            ->collapsible(true),
-                    // ->icon('heroicon-o-pencil'),
+                NavigationGroup::make()->label('Main Menu'),
+                NavigationGroup::make()->label('Payroll'),
+                NavigationGroup::make()->label('Salary Management')->collapsible(true),
+                NavigationGroup::make()->label('Configuration')->collapsible(true),
+                NavigationGroup::make()->label('Settings')->collapsible(true),
             ]);
     }
 }

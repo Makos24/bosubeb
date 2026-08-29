@@ -26,6 +26,11 @@ class SchoolResource extends Resource
 
     protected static ?string $navigationGroup = 'Main Menu';
 
+    public static function getNavigationBadge(): ?string
+    {
+        return (string) static::getModel()::count();
+    }
+
     public static function form(Form $form): Form
     {
         return $form

@@ -9,25 +9,18 @@ use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 
 class LGAStaffExport implements WithMultipleSheets
 {
-    
     use Exportable;
-    /**
-     * @return array
-     */
+
     public function sheets(): array
     {
         $sheets = [];
 
-        $staff =  Staff::with('school');
+        foreach (Lga::all() as $lga) {
+            $staff = Staff::with('school')->where('lga_id', $lga->id)->get();
 
-        $data = $staff->get();
-
-        $lgas = $staff->groupBy('lga_id')->pluck('lga_id');
-
-        //dd($data);
-        
-        foreach (Lga::findMany($lgas) as $lga) {
-            $sheets[] = new StaffExport($lga->name, $data->where('lga_id', $lga->id));
+            if ($staff->isNotEmpty()) {
+                $sheets[] = new StaffExport($lga->name, $staff);
+            }
         }
 
         return $sheets;
