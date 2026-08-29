@@ -67,7 +67,7 @@
                 Total Number of Staff
               </h3>
               <h1 class="text-2xl font-semibold tracking-tight text-gray-950 dark:text-white">
-                {{count($staff->get())}}
+                {{$staff->count()}}
               </h1>
               
             </div>
@@ -110,7 +110,7 @@
                 Number of Pensioners
               </h3>
               <h1 class="text-2xl font-semibold tracking-tight text-gray-950 dark:text-white">
-                {{count($pensions->where('expected_date_of_retirement', '<=', \Carbon\Carbon::today())->get())}}
+                {{$pensions->where('expected_date_of_retirement', '<=', \Carbon\Carbon::today())->count()}}
               </h1>
             </div>
             
@@ -158,7 +158,7 @@
                 Number of Students
               </h3>
               <h1 class="text-2xl font-semibold tracking-tight text-gray-950 dark:text-white">
-                {{count($students->get())}}
+                {{$students->count()}}
               </h1>
             </div>
             
@@ -204,7 +204,7 @@
                 Number of Late Cases
               </h3>
               <h1 class="text-2xl font-semibold tracking-tight text-gray-950 dark:text-white">
-                {{count($late->get())}}
+                {{$late->count()}}
               </h1>
             </div>
             
@@ -255,7 +255,7 @@
                 Number of Senior Citizens  
               </h3>
               <h1 class="text-2xl font-semibold tracking-tight text-gray-950 dark:text-white">
-              {{count($senior->get())}}
+              {{$senior->count()}}
               </h1>
             </div>
             
@@ -296,7 +296,7 @@
                 Grand Total of Staff
               </h3>
               <h1 class="text-2xl font-semibold tracking-tight text-gray-950 dark:text-white">
-              {{count($all->get())}}
+              {{$all->count()}}
               </h1>
               
             </div>
@@ -484,38 +484,38 @@
             <td class="fi-ta-cell p-0 first-of-type:ps-1 last-of-type:pe-1 sm:first-of-type:ps-3 sm:last-of-type:pe-3 w-1" data-label="LGA">{{$item->name}}</td>
            
             <td class="fi-ta-cell p-0 first-of-type:ps-1 last-of-type:pe-1 sm:first-of-type:ps-3 sm:last-of-type:pe-3 w-1" data-label="Schools">
-              {{isset($lg[$item->id]) ? $lg[$item->id]->groupBy('school_id')->count() : ''}}
+              {{(clone $lg)->where('lga_id', $item->id)->distinct()->count('school_id')}}
             </td>
             <td class="fi-ta-cell p-0 first-of-type:ps-1 last-of-type:pe-1 sm:first-of-type:ps-3 sm:last-of-type:pe-3 w-1" data-label="Staff">
-              {{isset($lg[$item->id]) ? $lg[$item->id]->where('lga_id', $item->id)->where('minimum_wage', 'Qualified')->count() : ''}}
-              <small class="text-gray-500">({{isset($lg[$item->id]) ? number_format($lg[$item->id]->where('lga_id', $item->id)->where('minimum_wage', 'Qualified')->sum('net_salary')) : 0}})</small>
+              {{(clone $lg)->where('lga_id', $item->id)->where('minimum_wage', 'Qualified')->count()}}
+              <small class="text-gray-500">({{number_format((clone $lg)->where('lga_id', $item->id)->where('minimum_wage', 'Qualified')->sum('net_salary'))}})</small>
             </td>
-            <td class="fi-ta-cell p-0 first-of-type:ps-1 last-of-type:pe-1 sm:first-of-type:ps-3 sm:last-of-type:pe-3 w-1" data-label="QualifiedRetired">{{isset($lg[$item->id]) ? $lg[$item->id]->where('lga_id', $item->id)->where('minimum_wage', 'Qualified')->where('expected_date_of_retirement', '<=', \Carbon\Carbon::today())->count() : ''}}
-            <small class="text-gray-500">({{isset($lg[$item->id]) ? number_format($lg[$item->id]->where('minimum_wage', 'Qualified')->where('expected_date_of_retirement', '<=', \Carbon\Carbon::today())->sum('net_salary')) : 0}})</small>
+            <td class="fi-ta-cell p-0 first-of-type:ps-1 last-of-type:pe-1 sm:first-of-type:ps-3 sm:last-of-type:pe-3 w-1" data-label="QualifiedRetired">{{(clone $lg)->where('lga_id', $item->id)->where('minimum_wage', 'Qualified')->where('expected_date_of_retirement', '<=', \Carbon\Carbon::today())->count()}}
+            <small class="text-gray-500">({{number_format((clone $lg)->where('lga_id', $item->id)->where('minimum_wage', 'Qualified')->where('expected_date_of_retirement', '<=', \Carbon\Carbon::today())->sum('net_salary'))}})</small>
             </td>
             <td class="fi-ta-cell p-0 first-of-type:ps-1 last-of-type:pe-1 sm:first-of-type:ps-3 sm:last-of-type:pe-3 w-1" data-label="Trainable">
-              {{isset($lg[$item->id]) ? $lg[$item->id]->where('lga_id', $item->id)->where('minimum_wage', 'Trainable')->count() : ''}}
-              <small class="text-gray-500">({{isset($lg[$item->id]) ? number_format($lg[$item->id]->where('lga_id', $item->id)->where('minimum_wage', 'Trainable')->sum('net_salary')) : 0}})</small>
+              {{(clone $lg)->where('lga_id', $item->id)->where('minimum_wage', 'Trainable')->count()}}
+              <small class="text-gray-500">({{number_format((clone $lg)->where('lga_id', $item->id)->where('minimum_wage', 'Trainable')->sum('net_salary'))}})</small>
             </td>
-            <td class="fi-ta-cell p-0 first-of-type:ps-1 last-of-type:pe-1 sm:first-of-type:ps-3 sm:last-of-type:pe-3 w-1" data-label="TrainableRetired">{{isset($lg[$item->id]) ? $lg[$item->id]->where('lga_id', $item->id)->where('minimum_wage', 'Trainable')->where('expected_date_of_retirement', '<=', \Carbon\Carbon::today())->count() : ''}}
-            <small class="text-gray-500">({{isset($lg[$item->id]) ? number_format($lg[$item->id]->where('lga_id', $item->id)->where('minimum_wage', 'Trainable')->where('expected_date_of_retirement', '<=', \Carbon\Carbon::today())->sum('net_salary')) : 0}})</small>
+            <td class="fi-ta-cell p-0 first-of-type:ps-1 last-of-type:pe-1 sm:first-of-type:ps-3 sm:last-of-type:pe-3 w-1" data-label="TrainableRetired">{{(clone $lg)->where('lga_id', $item->id)->where('minimum_wage', 'Trainable')->where('expected_date_of_retirement', '<=', \Carbon\Carbon::today())->count()}}
+            <small class="text-gray-500">({{number_format((clone $lg)->where('lga_id', $item->id)->where('minimum_wage', 'Trainable')->where('expected_date_of_retirement', '<=', \Carbon\Carbon::today())->sum('net_salary'))}})</small>
             </td>
             
             
             <td class="fi-ta-cell p-0 first-of-type:ps-1 last-of-type:pe-1 sm:first-of-type:ps-3 sm:last-of-type:pe-3 w-1" data-label="Non-Trainable">
-              {{isset($lg[$item->id]) ? $lg[$item->id]->where('lga_id', $item->id)->where('minimum_wage', 'Not Trainable')->count() : ''}}
-              <small class="text-gray-500">({{isset($lg[$item->id]) ? number_format($lg[$item->id]->where('lga_id', $item->id)->where('minimum_wage', 'Not Trainable')->sum('net_salary')) : 0}})</small>
+              {{(clone $lg)->where('lga_id', $item->id)->where('minimum_wage', 'Not Trainable')->count()}}
+              <small class="text-gray-500">({{number_format((clone $lg)->where('lga_id', $item->id)->where('minimum_wage', 'Not Trainable')->sum('net_salary'))}})</small>
             </td>
-            <td class="fi-ta-cell p-0 first-of-type:ps-1 last-of-type:pe-1 sm:first-of-type:ps-3 sm:last-of-type:pe-3 w-1" data-label="Non-TrainableRetired">{{isset($lg[$item->id]) ? $lg[$item->id]->where('lga_id', $item->id)->where('minimum_wage', 'Not Trainable')->where('expected_date_of_retirement', '<=', \Carbon\Carbon::today())->count() : ''}}
-            <small class="text-gray-500">({{isset($lg[$item->id]) ? number_format($lg[$item->id]->where('minimum_wage', 'Not Trainable')->where('expected_date_of_retirement', '<=', \Carbon\Carbon::today())->sum('net_salary')) : 0}})</small>
+            <td class="fi-ta-cell p-0 first-of-type:ps-1 last-of-type:pe-1 sm:first-of-type:ps-3 sm:last-of-type:pe-3 w-1" data-label="Non-TrainableRetired">{{(clone $lg)->where('lga_id', $item->id)->where('minimum_wage', 'Not Trainable')->where('expected_date_of_retirement', '<=', \Carbon\Carbon::today())->count()}}
+            <small class="text-gray-500">({{number_format((clone $lg)->where('lga_id', $item->id)->where('minimum_wage', 'Not Trainable')->where('expected_date_of_retirement', '<=', \Carbon\Carbon::today())->sum('net_salary'))}})</small>
             </td>
 
             <td class="fi-ta-cell p-0 first-of-type:ps-1 last-of-type:pe-1 sm:first-of-type:ps-3 sm:last-of-type:pe-3 w-1" data-label="Total">
-              {{isset($lg[$item->id]) ? $lg[$item->id]->where('lga_id', $item->id)->count() : ''}}
-              <small class="text-gray-500">({{isset($lg[$item->id]) ? number_format($lg[$item->id]->where('lga_id', $item->id)->sum('net_salary')) : 0}})</small>
+              {{(clone $lg)->where('lga_id', $item->id)->count()}}
+              <small class="text-gray-500">({{number_format((clone $lg)->where('lga_id', $item->id)->sum('net_salary'))}})</small>
             </td>
-            <td class="fi-ta-cell p-0 first-of-type:ps-1 last-of-type:pe-1 sm:first-of-type:ps-3 sm:last-of-type:pe-3 w-1" data-label="TotalRetired">{{isset($lg[$item->id]) ? $lg[$item->id]->where('lga_id', $item->id)->where('expected_date_of_retirement', '<=', \Carbon\Carbon::today())->count() : ''}}
-            <small class="text-gray-500">({{isset($lg[$item->id]) ? number_format($lg[$item->id]->where('lga_id', $item->id)->where('expected_date_of_retirement', '<=', \Carbon\Carbon::today())->sum('net_salary')) : 0}})</small>
+            <td class="fi-ta-cell p-0 first-of-type:ps-1 last-of-type:pe-1 sm:first-of-type:ps-3 sm:last-of-type:pe-3 w-1" data-label="TotalRetired">{{(clone $lg)->where('lga_id', $item->id)->where('expected_date_of_retirement', '<=', \Carbon\Carbon::today())->count()}}
+            <small class="text-gray-500">({{number_format((clone $lg)->where('lga_id', $item->id)->where('expected_date_of_retirement', '<=', \Carbon\Carbon::today())->sum('net_salary'))}})</small>
             </td>
           </tr>
          @endforeach
