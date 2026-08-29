@@ -35,7 +35,7 @@ class Dashboard extends Component
             'pensions' => (clone $base)->pensioners(),
             'senior'   => (clone $base)->senior(),
             'nq'       => clone $base,
-            'lg'       => (clone $base)->get()->groupBy('lga_id'),
+            'lg'       => $base,
             'salary'   => clone $base,
             'school'   => clone $base,
             'lga_page' => $lga_page,
